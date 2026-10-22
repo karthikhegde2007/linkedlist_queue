@@ -1,0 +1,582 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Linked List and Queue</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1d1d1b;--mu:#6b6b66;--card:#fff;--bd:#d4d4cb;--ac:#2f6fed;--cur:#e8590c;--prv:#7048e8;--tmp:#0ca678;--hd:#f08c00;--hl:#fff1a8;--code:#f1f1ea;box-sizing:border-box;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#ececea;--mu:#9a9a94;--card:#222427;--bd:#3a3d41;--ac:#74a0ff;--hl:#5a4f1a;--code:#1c1e20}}
+:root[data-theme="dark"]{--bg:#17181a;--fg:#ececea;--mu:#9a9a94;--card:#222427;--bd:#3a3d41;--ac:#74a0ff;--hl:#5a4f1a;--code:#1c1e20}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Noto Sans Kannada",Segoe UI,Roboto,sans-serif;padding:12px;max-width:1000px;margin:auto}
+h1{font-size:24px;margin:4px 0}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+button,a.b{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 11px;cursor:pointer;margin:2px;text-decoration:none;display:inline-block}
+button.on{background:var(--ac);color:#fff;border-color:var(--ac)}button.op{border-color:var(--ac)}
+input[type=number],input[type=text]{width:70px;font:inherit;padding:5px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--fg)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:4px 0}.mu{color:var(--mu);font-size:13px}.g{font-size:12px;color:var(--mu);margin:6px 0 0}
+.stage{overflow-x:auto;padding:6px 2px;min-height:130px}.rw{display:flex;align-items:flex-end;gap:2px;margin-bottom:8px;width:max-content;min-width:100%}
+.col{display:flex;flex-direction:column;align-items:center;min-width:62px}.tags{min-height:22px;display:flex;gap:3px}
+.t{font-size:11px;color:#fff;background:var(--c);border-radius:6px;padding:1px 6px}
+.node{display:flex;align-items:center;border:2px solid var(--ac);border-radius:8px;overflow:hidden}
+.node .info{padding:6px 10px;font-weight:700;font-size:16px;min-width:38px;text-align:center}
+.node i{font-style:normal;font-size:10px;color:var(--mu);padding:8px 4px;background:var(--code);align-self:stretch;display:flex;align-items:center}
+.node.hd{border-color:var(--hd)}.node.fr{opacity:.4;border-style:dashed}.node.nw{border-color:var(--tmp)}
+.ar{font-size:20px;color:var(--mu);padding-bottom:6px}.ar.bad{color:#d33}.nl{font-size:13px;color:var(--mu);padding-bottom:10px;white-space:nowrap}
+#msg{background:var(--hl);border-radius:8px;padding:8px 10px;min-height:46px;margin:6px 0}
+.out{background:#101312;color:#7CFC9A;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;border-radius:8px;padding:6px 10px;min-height:30px;white-space:pre-wrap}
+pre{background:var(--code);border-radius:8px;padding:8px 0;margin:6px 0;overflow:auto;max-height:46vh;position:relative;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace}
+pre div{padding:0 12px;white-space:pre}pre div.h{background:var(--hl);font-weight:700}pre.hide{filter:blur(6px)}
+.gb{display:block;text-align:left;font:13px ui-monospace,Menlo,Consolas,monospace;width:100%}ul{margin:4px 0;padding-left:20px}
+.wl{margin:6px 0;padding:6px 8px;border-left:3px solid var(--bd)}.wl code{display:block;font:13px ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;color:var(--fg)}.wl span{font-size:13px;color:var(--mu)}details{margin:6px 0;border:1px solid var(--bd);border-radius:8px;padding:6px 10px}summary{cursor:pointer;font-weight:600}textarea{width:100%;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--bd);border-radius:8px;padding:8px;background:var(--bg);color:var(--fg);min-height:240px}.ok{color:#0a8f5f}.no{color:#d33}.sn{padding:3px 8px;font-size:12px}.pm{background:var(--hl);border-radius:8px;padding:8px 10px;min-height:46px;margin:6px 0}
+</style></head><body>
+<div class="row"><h1 id="h1"></h1><span style="margin-left:auto"><button id="bE" onclick="setL('en')">English</button><button id="bK" onclick="setL('kn')">ಕನ್ನಡ</button></span></div>
+<div class="card" id="pgs"></div>
+<div class="row" id="tabs"></div>
+<div id="pV">
+<div class="card" id="intro"></div>
+<div class="card" id="run">
+<div class="row"><span id="l_v"></span> <input type="text" id="v" value="25"> <span id="l_k"></span> <input type="number" id="k" value="20"> <span id="l_p"></span> <input type="number" id="p" value="2"></div>
+<div class="row" id="ops"></div>
+<div class="row"><button onclick="rst()" id="b_r"></button><button onclick="step(-1)" id="b_b"></button><button onclick="step(1)" id="b_n"></button><button id="pl" onclick="play()"></button><button onclick="runAll()" id="b_a"></button><span class="mu" id="cnt"></span></div>
+<div class="stage" id="stage"></div><div class="mu" id="vars"></div><div id="msg"></div><div class="out" id="out"></div>
+<div class="row"><b id="fct"></b><label class="mu" style="margin-left:auto"><input type="checkbox" id="hc" style="width:auto"> <span id="l_h"></span></label></div><pre id="fcode"></pre>
+<div id="expl"></div><div class="g" id="leg"></div></div>
+<div class="card"><div class="row"><b id="ct"></b><button onclick="cp()" id="b_c"></button><button onclick="game()" id="b_g"></button></div><div class="mu" id="wo"></div><pre id="code" style="max-height:60vh"></pre></div>
+<div class="card" id="gm" hidden></div>
+<div class="card" id="vids"></div>
+<div class="card" id="rules"></div>
+</div>
+<div id="pC" hidden></div>
+<div id="pP" hidden>
+<div class="card"><div class="mu" id="pint"></div><div class="row" id="pops"></div><div id="ptask"></div>
+<div class="row" id="ptool"></div>
+<textarea id="ped" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+<div class="row"><button id="b_run" onclick="pRun()"></button><button id="b_hint" onclick="pHint()"></button><button id="b_ans" onclick="pAns()"></button><button id="b_st" onclick="pReset()"></button></div>
+<div id="pres"></div><div id="phint"></div></div>
+<div class="card" id="pwatch" hidden><b id="pw_t"></b><div class="row"><button onclick="pStep(-1)">◀</button><button onclick="pStep(1)">▶</button><button onclick="pStep(999)">⏩</button><span class="mu" id="pw_cnt"></span></div><div class="stage" id="pw_stage"></div><div class="pm" id="pw_msg"></div><div class="out" id="pw_out"></div><pre id="pw_code"></pre></div>
+<div class="card" id="pans" hidden></div>
+</div>
+<div style="text-align:center;font-size:12px;color:var(--mu);padding:4px 0 10px">Created by Karthik Hegde</div>
+<script>
+const $=i=>document.getElementById(i),cl=x=>JSON.parse(JSON.stringify(x)),isP=v=>typeof v=='string'&&/^n\d+$/.test(v);
+let lang='en',d,G,st=[],ix=0,cop='',tm=null,gm=null;
+const L=(a)=>lang=='en'?a[0]:a[1];
+const T={
+h1:['Linked List and Queue','Linked List ಮತ್ತು Queue'],
+v:['item / char','ಮೌಲ್ಯ (item)'],k:['key','key'],p:['position','position'],
+r:['Reset','ಮರುಹೊಂದಿಸಿ'],b:['◀ Back','◀ ಹಿಂದೆ'],n:['Next ▶','ಮುಂದೆ ▶'],auto:['▶ Auto','▶ ಸ್ವಯಂ'],pause:['⏸ Pause','⏸ ನಿಲ್ಲಿಸಿ'],all:['⏩ Run all','⏩ ಎಲ್ಲಾ ಓಡಿಸಿ'],
+step:['Step','ಹಂತ'],fc:['Code being executed (main call + function)','ಈಗ ನಡೆಯುತ್ತಿರುವ ಕೋಡ್ (main call + function)'],full:['Full C program','ಸಂಪೂರ್ಣ C ಪ್ರೋಗ್ರಾಂ'],
+cp:['Copy program','ಪ್ರೋಗ್ರಾಂ ನಕಲಿಸಿ'],gm:['🎮 Order the lines','🎮 ಸಾಲುಗಳನ್ನು ಜೋಡಿಸಿ'],hide:['Hide code','ಕೋಡ್ ಮರೆಮಾಡಿ'],
+ex:['📖 Explanation','📖 ವಿವರಣೆ'],vid:['🎬 Videos for these topics','🎬 ಈ ವಿಷಯಗಳ ವೀಡಿಯೊಗಳು'],
+vn:['Each button opens YouTube search with the title of a recommended video; open the first result.','ಪ್ರತಿ ಬಟನ್ ಶಿಫಾರಸು ಮಾಡಿದ ವೀಡಿಯೊ ಶೀರ್ಷಿಕೆಯೊಂದಿಗೆ YouTube ಹುಡುಕಾಟ ತೆರೆಯುತ್ತದೆ; ಮೊದಲ ಫಲಿತಾಂಶ ತೆರೆಯಿರಿ.'],
+order:['Write it in this order:','ಈ ಕ್ರಮದಲ್ಲಿ ಬರೆಯಿರಿ:'],pick:['Pick an operation above. Each click runs the real C function one statement at a time.','ಮೇಲೆ ಒಂದು operation ಆಯ್ಕೆಮಾಡಿ. ಪ್ರತಿ ಕ್ಲಿಕ್‌ನಲ್ಲಿ ನಿಜವಾದ C function ಒಂದೊಂದೇ statement ಆಗಿ ನಡೆಯುತ್ತದೆ.'],
+leg:['cur walks the list · prev is one node behind cur · temp is the new or removed node · dashed = freed · red arrow = prev link not fixed yet','cur = ಸಂಚರಿಸುವ pointer · prev = cur ನ ಹಿಂದಿನದು · temp = ಹೊಸ/ತೆಗೆಯುವ node · ಡ್ಯಾಶ್ = free ಆಗಿದೆ · ಕೆಂಪು ಬಾಣ = prev link ಇನ್ನೂ ಸರಿಯಾಗಿಲ್ಲ'],
+rl:['3 rules behind every function','ಪ್ರತಿ function ಹಿಂದಿನ 3 ನಿಯಮಗಳು'],
+r1:['Every list function gets first (or last / head) and returns the new one. main does first = insert_front(item, first);','ಪ್ರತಿ list function ಗೆ first (ಅಥವಾ last / head) ಬರುತ್ತದೆ, ಹೊಸದನ್ನು return ಮಾಡುತ್ತದೆ. main ನಲ್ಲಿ first = insert_front(item, first);'],
+r2:['temp = new or removed node, cur = walker, prev = one step behind cur.','temp = ಹೊಸ ಅಥವಾ ತೆಗೆಯುವ node, cur = ಸಂಚರಿಸುವ pointer, prev = cur ನ ಹಿಂದಿನ node.'],
+r3:['Check cases in this order: list empty, only one node, general case.','ಈ ಕ್ರಮದಲ್ಲಿ ಪರೀಕ್ಷಿಸಿ: list ಖಾಲಿ, ಒಂದೇ node, ಸಾಮಾನ್ಯ ಸಂದರ್ಭ.'],
+lim:['The demo allows 7 nodes. Delete one or press Reset.','ಡೆಮೋದಲ್ಲಿ ಗರಿಷ್ಠ 7 node. ಒಂದನ್ನು ಅಳಿಸಿ ಅಥವಾ Reset ಒತ್ತಿ.'],
+nn:['Type a number in the box first.','ಮೊದಲು ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಸಂಖ್ಯೆ ಟೈಪ್ ಮಾಡಿ.'],cpd:['Program copied.','ಪ್ರೋಗ್ರಾಂ ನಕಲಾಯಿತು.'],cpf:['Press and hold the code to select and copy it.','ಕೋಡ್ ಅನ್ನು ಒತ್ತಿ ಹಿಡಿದು ಆಯ್ಕೆಮಾಡಿ ನಕಲಿಸಿ.'],
+gt:['Tap the line that comes next. Braces are free.','ಮುಂದಿನ ಸಾಲನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ. { } ಉಚಿತ.'],gw:['Not yet. What must happen before that line?','ಇನ್ನೂ ಸರಿಯಲ್ಲ. ಈ ಸಾಲಿನ ಮೊದಲು ಏನು ನಡೆಯಬೇಕು?'],gd:['🎉 Perfect! Now tick “Hide code” and write this function on paper.','🎉 ಅದ್ಭುತ! ಈಗ “ಕೋಡ್ ಮರೆಮಾಡಿ” ಆಯ್ಕೆಮಾಡಿ, ಪುಸ್ತಕದಲ್ಲಿ ಬರೆಯಿರಿ.'],
+G:[['Lab programs','ಲ್ಯಾಬ್ ಪ್ರೋಗ್ರಾಂಗಳು'],['Singly list, stack, queue','Singly list, stack, queue'],['Header node (singly)','Header node (singly)'],['Doubly lists','Doubly lists'],['Queue in an array','Array queue']]
+};
+const OL={cr:['Create (front ×3)','ರಚಿಸಿ (front ×3)'],iF:['Insert front','ಮುಂದೆ ಸೇರಿಸಿ'],iE:['Insert rear','ಕೊನೆಗೆ ಸೇರಿಸಿ'],dF:['Delete front','ಮುಂದಿನಿಂದ ಅಳಿಸಿ'],dE:['Delete rear','ಕೊನೆಯಿಂದ ಅಳಿಸಿ'],iR:['Insert right of key','key ಬಲಕ್ಕೆ ಸೇರಿಸಿ'],dR:['Delete right of key','key ಬಲದ node ಅಳಿಸಿ'],dsp:['Display','ಪ್ರದರ್ಶಿಸಿ'],len:['Count nodes','node ಎಣಿಸಿ'],srch:['Search','ಹುಡುಕಿ'],dinfo:['Delete by info','info ಇಂದ ಅಳಿಸಿ'],cat:['Concatenate','ಜೋಡಿಸಿ (concat)'],rev:['Reverse','ಹಿಮ್ಮುಖ ಮಾಡಿ'],place:['Sorted insert','ಕ್ರಮವಾಗಿ ಸೇರಿಸಿ'],iP:['Insert at position','position ನಲ್ಲಿ ಸೇರಿಸಿ'],dP:['Delete at position','position ನಿಂದ ಅಳಿಸಿ'],qi:['Insert','ಸೇರಿಸಿ'],qd:['Delete','ಅಳಿಸಿ'],qs:['Display','ಪ್ರದರ್ಶಿಸಿ']};
+const OI={
+cr:['Create: call insert_front n times. The first item ends up last, so inserting 10, 20, 30 gives 30 → 20 → 10.','Create: insert_front ಅನ್ನು n ಬಾರಿ ಕರೆಯಿರಿ. 10, 20, 30 ಸೇರಿಸಿದರೆ 30 → 20 → 10 ಆಗುತ್ತದೆ.'],
+iF:['Insert front: make temp, set info, point temp’s link at the old first, then first becomes temp (return temp). Works on an empty list too. O(1).','Insert front: temp ರಚಿಸಿ, info ಇಡಿ, temp ನ link ಹಳೆಯ first ಗೆ ತೋರಿಸಿ, ನಂತರ first = temp (return temp). ಖಾಲಿ list ಗೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ. O(1).'],
+iE:['Insert rear: walk cur to the last node, then attach temp after it. If the list is empty temp itself is returned (circular lists connect temp back to the start). O(n).','Insert rear: cur ಅನ್ನು ಕೊನೆಯ node ವರೆಗೆ ಒಯ್ದು ಅದರ ನಂತರ temp ಜೋಡಿಸಿ. list ಖಾಲಿ ಇದ್ದರೆ temp ಅನ್ನೇ return ಮಾಡಿ (circular ನಲ್ಲಿ temp ಅನ್ನು ಆರಂಭಕ್ಕೆ ಜೋಡಿಸಿ). O(n).'],
+dF:['Delete front: check empty first, remember the first node, move first forward, print the item, then free the old node.','Delete front: ಮೊದಲು ಖಾಲಿ ಪರೀಕ್ಷಿಸಿ, ಮೊದಲ node ನೆನಪಿಡಿ, first ಅನ್ನು ಮುಂದೆ ಸರಿಸಿ, item ಮುದ್ರಿಸಿ, ಹಳೆಯ node ಅನ್ನು free ಮಾಡಿ.'],
+dE:['Delete rear: three cases: empty, only one node, more than one. Keep prev one step behind cur so prev becomes the new last node, then free cur.','Delete rear: 3 ಸಂದರ್ಭ: ಖಾಲಿ, ಒಂದೇ node, ಹೆಚ್ಚು node. prev ಅನ್ನು cur ನ ಹಿಂದೆ ಇಡಿ; prev ಹೊಸ ಕೊನೆಯ node ಆಗುತ್ತದೆ; ನಂತರ cur ಅನ್ನು free ಮಾಡಿ.'],
+dsp:['Display: if empty print a message; otherwise start cur at the first node and print cur->info while moving cur to the next node.','Display: ಖಾಲಿ ಇದ್ದರೆ ಸಂದೇಶ; ಇಲ್ಲದಿದ್ದರೆ cur ಅನ್ನು ಮೊದಲ node ನಿಂದ ಶುರುಮಾಡಿ cur->info ಮುದ್ರಿಸುತ್ತಾ ಮುಂದಿನ node ಗೆ ಸರಿಸಿ.'],
+len:['Length: walk cur from first and count every node until NULL.','Length: cur ಅನ್ನು first ನಿಂದ NULL ವರೆಗೆ ಸರಿಸುತ್ತಾ ಪ್ರತಿ node ಎಣಿಸಿ.'],
+srch:['Search: walk cur, compare item with cur->info and count pos. Stop when found or when cur becomes NULL. (Your notes print pos - 1; with pos starting at 1 the position is pos.)','Search: cur ಸರಿಸುತ್ತಾ item ಅನ್ನು cur->info ಜೊತೆ ಹೋಲಿಸಿ, pos ಎಣಿಸಿ. ಸಿಕ್ಕಾಗ ಅಥವಾ cur NULL ಆದಾಗ ನಿಲ್ಲಿಸಿ. (pos 1 ರಿಂದ ಶುರುವಾದರೆ ಸ್ಥಾನ = pos.)'],
+dinfo:['Delete by info: if key is in the first node move first; otherwise walk with prev and cur, then prev->link = cur->link and free cur.','Delete by info: key ಮೊದಲ node ನಲ್ಲಿದ್ದರೆ first ಸರಿಸಿ; ಇಲ್ಲದಿದ್ದರೆ prev, cur ಜೊತೆ ಹುಡುಕಿ prev->link = cur->link ಮಾಡಿ cur ಅನ್ನು free ಮಾಡಿ.'],
+cat:['Concatenate: attach list sec after the last node of first (the second list is 70 → 80 here). If first is empty return sec.','Concatenate: first ನ ಕೊನೆಯ node ನಂತರ sec list ಜೋಡಿಸಿ (ಇಲ್ಲಿ ಎರಡನೇ list 70 → 80). first ಖಾಲಿ ಇದ್ದರೆ sec return.'],
+rev:['Reverse without new nodes: cur is the reversed part. Each round: temp = first->link, first->link = cur, then cur and first move ahead.','ಹೊಸ node ಇಲ್ಲದೆ reverse: cur = ಹಿಮ್ಮುಖವಾದ ಭಾಗ. ಪ್ರತಿ ಸುತ್ತಿನಲ್ಲಿ temp = first->link, first->link = cur, ನಂತರ cur ಮತ್ತು first ಮುಂದೆ ಸರಿಸಿ.'],
+iR:['Insert right of key: find the node whose info is key (cur), then temp->link = cur->link and cur->link = temp. The order of these two lines matters. In doubly lists also fix the llink of both new neighbours.','Key ನ ಬಲಕ್ಕೆ ಸೇರಿಸಿ: info = key ಇರುವ node (cur) ಹುಡುಕಿ, ನಂತರ temp->link = cur->link, cur->link = temp (ಈ ಎರಡರ ಕ್ರಮ ಮುಖ್ಯ). Doubly ನಲ್ಲಿ ಎರಡೂ ಕಡೆ llink ಕೂಡ ಸರಿಪಡಿಸಿ.'],
+dR:['Delete right of key: find cur with info == key, take temp = cur->link, bypass it with cur->link = temp->link, then free temp. In circular lists the node to the right of the last node is the first node.','Key ನ ಬಲದ node ಅಳಿಸಿ: info == key ಇರುವ cur ಹುಡುಕಿ, temp = cur->link, cur->link = temp->link ಮಾಡಿ ಬಿಟ್ಟುಹೋಗಿ, temp ಅನ್ನು free ಮಾಡಿ. Circular ನಲ್ಲಿ ಕೊನೆಯ node ನ ಬಲ = ಮೊದಲ node.'],
+place:['Sorted insert (place): keep the list in ascending order: find the first node not smaller than item, then link temp between prev and cur.','Sorted insert (place): list ಏರುಕ್ರಮದಲ್ಲಿ ಉಳಿಯುವಂತೆ: item ಗಿಂತ ಚಿಕ್ಕದಲ್ಲದ ಮೊದಲ node ಹುಡುಕಿ, prev ಮತ್ತು cur ನಡುವೆ temp ಜೋಡಿಸಿ.'],
+iP:['Insert at position: walk prev and cur to the position, then prev->link = temp and temp->link = cur. Position 1 is the front.','Position ನಲ್ಲಿ ಸೇರಿಸಿ: prev, cur ಅನ್ನು position ವರೆಗೆ ಸರಿಸಿ, prev->link = temp, temp->link = cur. Position 1 = ಮುಂಭಾಗ.'],
+dP:['Delete at position: walk prev and cur to that position, then prev->link = cur->link and free cur.','Position ನಿಂದ ಅಳಿಸಿ: prev, cur ಅನ್ನು ಆ position ವರೆಗೆ ಸರಿಸಿ, prev->link = cur->link, cur ಅನ್ನು free ಮಾಡಿ.'],
+qi:['Insert (enqueue): check overflow first, then move rear and store the item at data[rear]. In the circular queue rear = (rear + 1) % MAX wraps around.','Insert (enqueue): ಮೊದಲು overflow ಪರೀಕ್ಷಿಸಿ, ನಂತರ rear ಸರಿಸಿ data[rear] ನಲ್ಲಿ item ಇಡಿ. Circular queue ನಲ್ಲಿ rear = (rear + 1) % MAX ಸುತ್ತುತ್ತದೆ.'],
+qd:['Delete (dequeue): check underflow first, then print data[front] and move front forward.','Delete (dequeue): ಮೊದಲು underflow ಪರೀಕ್ಷಿಸಿ, data[front] ಮುದ್ರಿಸಿ, front ಮುಂದೆ ಸರಿಸಿ.'],
+qs:['Display: if empty print a message; otherwise print the elements from front to rear.','Display: ಖಾಲಿ ಇದ್ದರೆ ಸಂದೇಶ; ಇಲ್ಲದಿದ್ದರೆ front ನಿಂದ rear ವರೆಗೆ ಮುದ್ರಿಸಿ.']};
+const FI={
+S:['Singly linked list: each node has info (data) and link (address of the next node). first points to the first node; the last node’s link is NULL.','Singly linked list: ಪ್ರತಿ node ನಲ್ಲಿ info (ಡೇಟಾ) ಮತ್ತು link (ಮುಂದಿನ node ವಿಳಾಸ) ಇರುತ್ತದೆ. first ಮೊದಲ node ಅನ್ನು ತೋರಿಸುತ್ತದೆ; ಕೊನೆಯ node ನ link NULL.'],
+C:['Circular singly list with a last pointer: last->link is the first node, so the list is a ring. Insert at front or rear needs no loop. Empty list: last = NULL.','Circular singly list (last pointer): last->link ಮೊದಲ node, ಆದ್ದರಿಂದ list ಉಂಗುರ. ಮುಂದೆ/ಕೊನೆಗೆ ಸೇರಿಸಲು loop ಬೇಡ. ಖಾಲಿ list: last = NULL.'],
+H:['Header node: an extra first node (head) that holds no data, so the real list starts at head->link. Empty list: head->link == NULL, so the front never needs a special case.','Header node: ಡೇಟಾ ಇಲ್ಲದ ಹೆಚ್ಚುವರಿ ಮೊದಲ node (head); ನಿಜವಾದ list head->link ನಿಂದ ಶುರು. ಖಾಲಿ list: head->link == NULL; ಮುಂಭಾಗಕ್ಕೆ ವಿಶೇಷ ಸಂದರ್ಭ ಬೇಡ.'],
+HC:['Circular list with header: the last node links back to head. Empty list: head->link == head, so loops stop at head instead of NULL.','Header ಸಹಿತ circular list: ಕೊನೆಯ node head ಗೆ ಹಿಂದಿರುಗುತ್ತದೆ. ಖಾಲಿ list: head->link == head; loop NULL ಬದಲು head ನಲ್ಲಿ ನಿಲ್ಲುತ್ತದೆ.'],
+D:['Doubly linked list: each node has llink (previous), info and rlink (next). The first node’s llink and the last node’s rlink are NULL. Every change must fix both links.','Doubly linked list: ಪ್ರತಿ node ನಲ್ಲಿ llink (ಹಿಂದಿನದು), info, rlink (ಮುಂದಿನದು). ಮೊದಲ node ನ llink ಮತ್ತು ಕೊನೆಯ node ನ rlink NULL. ಪ್ರತಿ ಬದಲಾವಣೆಯಲ್ಲಿ ಎರಡೂ link ಸರಿಪಡಿಸಿ.'],
+CD:['Circular doubly list: last->rlink is first and first->llink is last, so last = first->llink. There is no NULL anywhere.','Circular doubly list: last->rlink = first, first->llink = last; ಆದ್ದರಿಂದ last = first->llink. NULL ಎಲ್ಲೂ ಇಲ್ಲ.'],
+DH:['Doubly list with header: head holds no data; head->rlink is the first real node and its llink points back to head.','Header ಸಹಿತ doubly list: head ಡೇಟಾ ಇಲ್ಲದ node; head->rlink ಮೊದಲ ನಿಜ node, ಅದರ llink head ಗೆ ತೋರಿಸುತ್ತದೆ.'],
+CDH:['Circular doubly list with header: head->rlink is the first node, head->llink is the last node, and both ends connect back to head.','Header ಸಹಿತ circular doubly list: head->rlink ಮೊದಲ node, head->llink ಕೊನೆಯ node; ಎರಡೂ ತುದಿ head ಗೆ ಸೇರುತ್ತವೆ.'],
+QC:['Circular queue in an array: rear = (rear + 1) % MAX wraps around; count == MAX means full (overflow), count == 0 means empty (underflow).','Array ನಲ್ಲಿ circular queue: rear = (rear + 1) % MAX ಸುತ್ತುತ್ತದೆ; count == MAX ತುಂಬಿದೆ (overflow), count == 0 ಖಾಲಿ (underflow).'],
+QL:['Linear queue in an array: rear only moves forward, so freed cells at the front are never reused (overflow even when front cells are free).','Array ನಲ್ಲಿ linear queue: rear ಮುಂದೆ ಮಾತ್ರ ಹೋಗುತ್ತದೆ, ಮುಂಭಾಗದ ಖಾಲಿ ಜಾಗ ಮರುಬಳಕೆ ಆಗುವುದಿಲ್ಲ (ಮುಂದೆ ಖಾಲಿ ಇದ್ದರೂ overflow).']};
+const XI={stk:['Stack (LIFO): push = insert_front and pop = delete_front, so the top is first. Both are O(1).','Stack (LIFO): push = insert_front, pop = delete_front; top = first. ಎರಡೂ O(1).'],que:['Queue (FIFO): enqueue = insert_rear (at the end), dequeue = delete_front (from the front).','Queue (FIFO): enqueue = insert_rear (ಕೊನೆಗೆ), dequeue = delete_front (ಮುಂದಿನಿಂದ).'],deq:['Double-ended queue: insert and delete are allowed at both the front and the rear.','Double-ended queue: ಮುಂದೆ ಮತ್ತು ಕೊನೆ ಎರಡೂ ಕಡೆ ಸೇರಿಸಬಹುದು/ಅಳಿಸಬಹುದು.']};
+
+// ---------- C source libraries (mam's style) ----------
+const EM=(c,r,m)=>`    if (${c})\n    {\n        printf("${m||'List is empty'}\\n");\n        return${r?' '+r:''};\n    }\n`;
+const PI=(x,s)=>`${s||'    '}printf("Item deleted = %d\\n", ${x}->info);\n`;
+const GN='    temp = createNode();\n    temp->info = item;\n';
+const CN=m=>`NODE createNode()\n{\n    NODE newnode;\n    newnode = (NODE)malloc(sizeof(struct node));\n    if (newnode == NULL)\n    {\n        printf("Memory allocation failed\\n");\n        exit(0);\n    }\n    return newnode;\n}`;
+const PS='#include <stdio.h>\n#include <stdlib.h>\n\nstruct node\n{\n    int info;\n    struct node *link;\n};\ntypedef struct node *NODE;\n\n'+CN();
+const PD='#include <stdio.h>\n#include <stdlib.h>\n\nstruct node\n{\n    int info;\n    struct node *llink;\n    struct node *rlink;\n};\ntypedef struct node *NODE;\n\n'+CN();
+const BN={iF:'insert_front',iE:'insert_rear',dF:'delete_front',dE:'delete_rear',dsp:'display',len:'length',srch:'search',dinfo:'delete_info',cat:'concat',rev:'reverse',iR:'insert_right',dR:'delete_right',place:'place',iP:'insert_pos',dP:'delete_pos'};
+const SL=N=>({
+iF:`NODE ${N.iF}(int item, NODE first)\n{\n    NODE temp;\n${GN}    temp->link = first;\n    return temp;\n}`,
+iE:`NODE ${N.iE}(int item, NODE first)\n{\n    NODE temp, cur;\n${GN}    temp->link = NULL;\n    if (first == NULL)\n        return temp;\n    cur = first;\n    while (cur->link != NULL)\n    {\n        cur = cur->link;\n    }\n    cur->link = temp;\n    return first;\n}`,
+dF:`NODE ${N.dF}(NODE first)\n{\n    NODE temp;\n${EM('first == NULL','NULL')}    temp = first;\n    temp = temp->link;\n${PI('first')}    free(first);\n    return temp;\n}`,
+dE:`NODE ${N.dE}(NODE first)\n{\n    NODE prev, cur;\n${EM('first == NULL','NULL')}    if (first->link == NULL)\n    {\n${PI('first','        ')}        free(first);\n        return NULL;\n    }\n    prev = NULL;\n    cur = first;\n    while (cur->link != NULL)\n    {\n        prev = cur;\n        cur = cur->link;\n    }\n${PI('cur')}    free(cur);\n    prev->link = NULL;\n    return first;\n}`,
+dsp:`void ${N.dsp}(NODE first)\n{\n    NODE cur;\n${EM('first == NULL','')}    printf("The contents of the list are:\\n");\n    cur = first;\n    while (cur != NULL)\n    {\n        printf("Item %d\\n", cur->info);\n        cur = cur->link;\n    }\n}`,
+len:`int ${N.len}(NODE first)\n{\n    NODE cur;\n    int ecount = 0;\n    if (first == NULL)\n        return 0;\n    cur = first;\n    while (cur != NULL)\n    {\n        ecount++;\n        cur = cur->link;\n    }\n    return ecount;\n}`,
+srch:`void ${N.srch}(int item, NODE first)\n{\n    NODE cur;\n    int pos;\n${EM('first == NULL','')}    cur = first;\n    pos = 1;\n    while (cur != NULL && item != cur->info)\n    {\n        cur = cur->link;\n        pos++;\n    }\n    if (cur == NULL)\n    {\n        printf("Search unsuccessful\\n");\n        return;\n    }\n    printf("Search successful\\n");\n    printf("Item found at position %d\\n", pos);\n}`,
+dinfo:`NODE ${N.dinfo}(int key, NODE first)\n{\n    NODE prev, cur;\n${EM('first == NULL','NULL')}    if (key == first->info)\n    {\n        cur = first;\n        first = first->link;\n        free(cur);\n        return first;\n    }\n    prev = NULL;\n    cur = first;\n    while (cur != NULL)\n    {\n        if (key == cur->info)\n            break;\n        prev = cur;\n        cur = cur->link;\n    }\n${EM('cur == NULL','first','Search is unsuccessful')}    prev->link = cur->link;\n    free(cur);\n    return first;\n}`,
+cat:`NODE ${N.cat}(NODE first, NODE sec)\n{\n    NODE cur;\n    if (first == NULL)\n        return sec;\n    if (sec == NULL)\n        return first;\n    cur = first;\n    while (cur->link != NULL)\n    {\n        cur = cur->link;\n    }\n    cur->link = sec;\n    return first;\n}`,
+rev:`NODE ${N.rev}(NODE first)\n{\n    NODE cur, temp;\n    cur = NULL;\n    while (first != NULL)\n    {\n        temp = first->link;\n        first->link = cur;\n        cur = first;\n        first = temp;\n    }\n    return cur;\n}`,
+iR:`NODE ${N.iR}(int item, int key, NODE first)\n{\n    NODE temp, cur;\n    cur = first;\n    while (cur != NULL && cur->info != key)\n        cur = cur->link;\n${EM('cur == NULL','first','Key not found')}${GN}    temp->link = cur->link;\n    cur->link = temp;\n    return first;\n}`,
+dR:`NODE ${N.dR}(int key, NODE first)\n{\n    NODE temp, cur;\n    cur = first;\n    while (cur != NULL && cur->info != key)\n        cur = cur->link;\n${EM('cur == NULL || cur->link == NULL','first','Cannot delete')}    temp = cur->link;\n    cur->link = temp->link;\n${PI('temp')}    free(temp);\n    return first;\n}`,
+place:`NODE ${N.place}(int item, NODE first)\n{\n    NODE temp, cur, prev;\n${GN}    temp->link = NULL;\n    if (first == NULL)\n        return temp;\n    if (item < first->info)\n    {\n        temp->link = first;\n        return temp;\n    }\n    prev = NULL;\n    cur = first;\n    while (cur != NULL && item >= cur->info)\n    {\n        prev = cur;\n        cur = cur->link;\n    }\n    prev->link = temp;\n    temp->link = cur;\n    return first;\n}`,
+iP:`NODE ${N.iP}(int item, int pos, NODE first)\n{\n    NODE temp, cur, prev;\n    int i;\n${GN}    if (pos == 1)\n    {\n        temp->link = first;\n        return temp;\n    }\n    prev = NULL;\n    cur = first;\n    i = 1;\n    while (cur != NULL && i < pos)\n    {\n        prev = cur;\n        cur = cur->link;\n        i++;\n    }\n    if (i < pos)\n    {\n        printf("Invalid position\\n");\n        free(temp);\n        return first;\n    }\n    prev->link = temp;\n    temp->link = cur;\n    return first;\n}`,
+dP:`NODE ${N.dP}(int pos, NODE first)\n{\n    NODE cur, prev;\n    int i;\n${EM('first == NULL','NULL')}    if (pos == 1)\n    {\n        cur = first;\n        first = first->link;\n${PI('cur','        ')}        free(cur);\n        return first;\n    }\n    prev = NULL;\n    cur = first;\n    i = 1;\n    while (cur != NULL && i < pos)\n    {\n        prev = cur;\n        cur = cur->link;\n        i++;\n    }\n${EM('cur == NULL','first','Invalid position')}    prev->link = cur->link;\n${PI('cur')}    free(cur);\n    return first;\n}`});
+const CL=N=>({
+iF:`NODE ${N.iF}(int item, NODE last)\n{\n    NODE temp;\n${GN}    if (last == NULL)\n        last = temp;\n    else\n        temp->link = last->link;\n    last->link = temp;\n    return last;\n}`,
+iE:`NODE ${N.iE}(int item, NODE last)\n{\n    NODE temp;\n${GN}    if (last == NULL)\n        temp->link = temp;\n    else\n    {\n        temp->link = last->link;\n        last->link = temp;\n    }\n    return temp;\n}`,
+dE:`NODE ${N.dE}(NODE last)\n{\n    NODE prev;\n${EM('last == NULL','NULL')}    if (last->link == last)\n    {\n${PI('last','        ')}        free(last);\n        return NULL;\n    }\n    prev = last->link;\n    while (prev->link != last)\n    {\n        prev = prev->link;\n    }\n    prev->link = last->link;\n${PI('last')}    free(last);\n    return prev;\n}`,
+iR:`NODE ${N.iR}(NODE last)\n{\n    NODE cur, temp;\n    int key, item;\n${EM('last == NULL','last')}    printf("Enter the node value: ");\n    scanf("%d", &key);\n    printf("Enter data to insert: ");\n    scanf("%d", &item);\n${GN}    cur = last->link;\n    while (cur->info != key && cur != last)\n    {\n        cur = cur->link;\n    }\n${EM('cur->info != key','last','Node not found').replace('        return last;','        free(temp);\n        return last;')}    temp->link = cur->link;\n    cur->link = temp;\n    if (cur == last)\n        last = temp;\n    return last;\n}`,
+dR:`NODE ${N.dR}(NODE last)\n{\n    NODE cur, temp;\n    int key;\n${EM('last == NULL','NULL')}    printf("Enter the node value: ");\n    scanf("%d", &key);\n    cur = last->link;\n    while (cur->info != key && cur != last)\n    {\n        cur = cur->link;\n    }\n${EM('cur->info != key','last','Node not found')}    temp = cur->link;\n    if (temp == cur)\n    {\n        free(temp);\n        return NULL;\n    }\n    cur->link = temp->link;\n    if (temp == last)\n        last = cur;\n${PI('temp')}    free(temp);\n    return last;\n}`,
+dsp:`void ${N.dsp}(NODE last)\n{\n    NODE temp;\n${EM('last == NULL','')}    printf("The contents of the list are:\\n");\n    temp = last->link;\n    while (temp != last)\n    {\n        printf("Item %d\\n", temp->info);\n        temp = temp->link;\n    }\n    printf("Item %d\\n", temp->info);\n}`,
+dF:`NODE ${N.dF}(NODE last)\n{\n    NODE first;\n${EM('last == NULL','NULL')}    if (last->link == last)\n    {\n${PI('last','        ')}        free(last);\n        return NULL;\n    }\n    first = last->link;\n    last->link = first->link;\n${PI('first')}    free(first);\n    return last;\n}`});
+const HL=(N,c)=>{const T=c?'head':'NULL';return{
+iF:`NODE ${N.iF}(int item, NODE head)\n{\n    NODE temp, first;\n${GN}    first = head->link;\n    head->link = temp;\n    temp->link = first;\n    return head;\n}`,
+iE:`NODE ${N.iE}(int item, NODE head)\n{\n    NODE temp, cur;\n${GN}${c?'    cur = head->link;\n':'    temp->link = NULL;\n    cur = head;\n'}    while (cur->link != ${T})\n    {\n        cur = cur->link;\n    }\n    cur->link = temp;\n${c?'    temp->link = head;\n':''}    return head;\n}`,
+dF:`NODE ${N.dF}(NODE head)\n{\n    NODE first, second;\n${EM(`head->link == ${T}`,'head')}    first = head->link;\n    second = first->link;\n    head->link = second;\n${PI('first')}    free(first);\n    return head;\n}`,
+dE:`NODE ${N.dE}(NODE head)\n{\n    NODE prev, cur;\n${EM(`head->link == ${T}`,'head')}    prev = head;\n    cur = head->link;\n    while (cur->link != ${T})\n    {\n        prev = cur;\n        cur = cur->link;\n    }\n    prev->link = ${T};\n${PI('cur')}    free(cur);\n    return head;\n}`,
+iR:`NODE ${N.iR}(int item, int key, NODE head)\n{\n    NODE temp, cur;\n    cur = head->link;\n    while (cur != ${T} && cur->info != key)\n        cur = cur->link;\n${EM(`cur == ${T}`,'head','Key not found')}${GN}    temp->link = cur->link;\n    cur->link = temp;\n    return head;\n}`,
+dR:`NODE ${N.dR}(int key, NODE head)\n{\n    NODE temp, cur;\n    cur = head->link;\n    while (cur != ${T} && cur->info != key)\n        cur = cur->link;\n${EM(`cur == ${T} || cur->link == ${T}`,'head','Cannot delete')}    temp = cur->link;\n    cur->link = temp->link;\n${PI('temp')}    free(temp);\n    return head;\n}`,
+dsp:`void ${N.dsp}(NODE head)\n{\n    NODE cur;\n${EM(`head->link == ${T}`,'')}    printf("The contents of the list are:\\n");\n    cur = head->link;\n    while (cur != ${T})\n    {\n        printf("Item %d\\n", cur->info);\n        cur = cur->link;\n    }\n}`}};
+const DL=N=>({
+iF:`NODE ${N.iF}(int item, NODE first)\n{\n    NODE temp;\n${GN}    temp->llink = temp->rlink = NULL;\n    if (first == NULL)\n        return temp;\n    temp->rlink = first;\n    first->llink = temp;\n    return temp;\n}`,
+iE:`NODE ${N.iE}(int item, NODE first)\n{\n    NODE temp, cur;\n${GN}    temp->llink = temp->rlink = NULL;\n    if (first == NULL)\n        return temp;\n    cur = first;\n    while (cur->rlink != NULL)\n    {\n        cur = cur->rlink;\n    }\n    cur->rlink = temp;\n    temp->llink = cur;\n    return first;\n}`,
+dF:`NODE ${N.dF}(NODE first)\n{\n    NODE second;\n${EM('first == NULL','NULL')}    if (first->rlink == NULL)\n    {\n${PI('first','        ')}        free(first);\n        return NULL;\n    }\n    second = first->rlink;\n    second->llink = NULL;\n${PI('first')}    free(first);\n    return second;\n}`,
+dE:`NODE ${N.dE}(NODE first)\n{\n    NODE cur, prev;\n${EM('first == NULL','NULL')}    if (first->rlink == NULL)\n    {\n${PI('first','        ')}        free(first);\n        return NULL;\n    }\n    prev = NULL;\n    cur = first;\n    while (cur->rlink != NULL)\n    {\n        prev = cur;\n        cur = cur->rlink;\n    }\n${PI('cur')}    free(cur);\n    prev->rlink = NULL;\n    return first;\n}`,
+dsp:`void ${N.dsp}(NODE first)\n{\n    NODE cur;\n    int count = 0;\n${EM('first == NULL','')}    printf("The contents of the doubly linked list are:\\n");\n    cur = first;\n    while (cur != NULL)\n    {\n        printf("Item %d\\n", cur->info);\n        count++;\n        cur = cur->rlink;\n    }\n    printf("Number of nodes = %d\\n", count);\n}`,
+iR:`NODE ${N.iR}(int item, int key, NODE first)\n{\n    NODE temp, cur;\n    cur = first;\n    while (cur != NULL && cur->info != key)\n        cur = cur->rlink;\n${EM('cur == NULL','first','Key not found')}${GN}    temp->llink = cur;\n    temp->rlink = cur->rlink;\n    if (cur->rlink != NULL)\n        cur->rlink->llink = temp;\n    cur->rlink = temp;\n    return first;\n}`,
+dR:`NODE ${N.dR}(int key, NODE first)\n{\n    NODE temp, cur;\n    cur = first;\n    while (cur != NULL && cur->info != key)\n        cur = cur->rlink;\n${EM('cur == NULL || cur->rlink == NULL','first','Cannot delete')}    temp = cur->rlink;\n    cur->rlink = temp->rlink;\n    if (temp->rlink != NULL)\n        temp->rlink->llink = cur;\n${PI('temp')}    free(temp);\n    return first;\n}`});
+const CDL=N=>({
+iF:`NODE ${N.iF}(int item, NODE first)\n{\n    NODE temp, last;\n${GN}    temp->llink = temp->rlink = temp;\n    if (first == NULL)\n        return temp;\n    last = first->llink;\n    temp->rlink = first;\n    first->llink = temp;\n    last->rlink = temp;\n    temp->llink = last;\n    return temp;\n}`,
+iE:`NODE ${N.iE}(int item, NODE first)\n{\n    NODE temp, last;\n${GN}    temp->llink = temp->rlink = temp;\n    if (first == NULL)\n        return temp;\n    last = first->llink;\n    last->rlink = temp;\n    temp->llink = last;\n    first->llink = temp;\n    temp->rlink = first;\n    return first;\n}`,
+dF:`NODE ${N.dF}(NODE first)\n{\n    NODE second, last;\n${EM('first == NULL','NULL')}    if (first->rlink == first)\n    {\n${PI('first','        ')}        free(first);\n        return NULL;\n    }\n    second = first->rlink;\n    last = first->llink;\n    second->llink = last;\n    last->rlink = second;\n${PI('first')}    free(first);\n    return second;\n}`,
+dE:`NODE ${N.dE}(NODE first)\n{\n    NODE last, prev;\n${EM('first == NULL','NULL')}    if (first->rlink == first)\n    {\n${PI('first','        ')}        free(first);\n        return NULL;\n    }\n    last = first->llink;\n    prev = last->llink;\n    first->llink = prev;\n    prev->rlink = first;\n${PI('last')}    free(last);\n    return first;\n}`,
+dsp:`void ${N.dsp}(NODE first)\n{\n    NODE cur, last;\n${EM('first == NULL','')}    printf("The contents of the list are:\\n");\n    cur = first;\n    last = first->llink;\n    while (cur != last)\n    {\n        printf("Item %d\\n", cur->info);\n        cur = cur->rlink;\n    }\n    printf("Item %d\\n", cur->info);\n}`,
+iR:`NODE ${N.iR}(int item, int key, NODE first)\n{\n    NODE temp, cur;\n${EM('first == NULL','NULL')}    cur = first;\n    while (cur->rlink != first && cur->info != key)\n        cur = cur->rlink;\n${EM('cur->info != key','first','Key not found')}${GN}    temp->llink = cur;\n    temp->rlink = cur->rlink;\n    cur->rlink->llink = temp;\n    cur->rlink = temp;\n    return first;\n}`,
+dR:`NODE ${N.dR}(int key, NODE first)\n{\n    NODE temp, cur;\n${EM('first == NULL','NULL')}    cur = first;\n    while (cur->rlink != first && cur->info != key)\n        cur = cur->rlink;\n${EM('cur->info != key','first','Key not found')}    temp = cur->rlink;\n    if (temp == cur)\n    {\n        free(temp);\n        return NULL;\n    }\n    cur->rlink = temp->rlink;\n    temp->rlink->llink = cur;\n    if (temp == first)\n        first = cur->rlink;\n${PI('temp')}    free(temp);\n    return first;\n}`});
+const DHL=(N,c)=>{const T=c?'head':'NULL';return{
+iF:`NODE ${N.iF}(int item, NODE head)\n{\n    NODE temp, first;\n${GN}    first = head->rlink;\n    temp->llink = head;\n    head->rlink = temp;\n    temp->rlink = first;\n${c?'    first->llink = temp;\n':'    if (first != NULL)\n        first->llink = temp;\n'}    return head;\n}`,
+iE:`NODE ${N.iE}(int item, NODE head)\n{\n    NODE temp, ${c?'last':'cur'};\n${GN}${c?'    last = head->llink;\n    temp->rlink = head;\n    last->rlink = temp;\n    temp->llink = last;\n    head->llink = temp;\n':'    temp->rlink = NULL;\n    cur = head;\n    while (cur->rlink != NULL)\n    {\n        cur = cur->rlink;\n    }\n    cur->rlink = temp;\n    temp->llink = cur;\n'}    return head;\n}`,
+dF:`NODE ${N.dF}(NODE head)\n{\n    NODE first, second;\n${EM(`head->rlink == ${T}`,'head')}    first = head->rlink;\n    second = first->rlink;\n    head->rlink = second;\n${c?'    second->llink = head;\n':'    if (second != NULL)\n        second->llink = head;\n'}${PI('first')}    free(first);\n    return head;\n}`,
+dE:`NODE ${N.dE}(NODE head)\n{\n    NODE ${c?'last, prev':'cur'};\n${EM(`head->rlink == ${T}`,'head')}${c?'    last = head->llink;\n    prev = last->llink;\n    head->llink = prev;\n    prev->rlink = head;\n':'    cur = head->rlink;\n    while (cur->rlink != NULL)\n    {\n        cur = cur->rlink;\n    }\n    cur->llink->rlink = NULL;\n'}${PI(c?'last':'cur')}    free(${c?'last':'cur'});\n    return head;\n}`,
+iR:`NODE ${N.iR}(int item, int key, NODE head)\n{\n    NODE temp, cur;\n    cur = head->rlink;\n    while (cur != ${T} && cur->info != key)\n        cur = cur->rlink;\n${EM(`cur == ${T}`,'head','Key not found')}${GN}    temp->llink = cur;\n    temp->rlink = cur->rlink;\n${c?'    cur->rlink->llink = temp;\n':'    if (cur->rlink != NULL)\n        cur->rlink->llink = temp;\n'}    cur->rlink = temp;\n    return head;\n}`,
+dR:`NODE ${N.dR}(int key, NODE head)\n{\n    NODE temp, cur;\n    cur = head->rlink;\n    while (cur != ${T} && cur->info != key)\n        cur = cur->rlink;\n${EM(`cur == ${T} || cur->rlink == ${T}`,'head','Cannot delete')}    temp = cur->rlink;\n    cur->rlink = temp->rlink;\n${c?'    temp->rlink->llink = cur;\n':'    if (temp->rlink != NULL)\n        temp->rlink->llink = cur;\n'}${PI('temp')}    free(temp);\n    return head;\n}`,
+dsp:`void ${N.dsp}(NODE head)\n{\n    NODE cur;\n${EM(`head->rlink == ${T}`,'')}    printf("The contents of the list are:\\n");\n    cur = head->rlink;\n    while (cur != ${T})\n    {\n        printf("Item %d\\n", cur->info);\n        cur = cur->rlink;\n    }\n}`}};
+const QPC='#include <stdio.h>\n#include <stdlib.h>\n#define MAX 6\n\nstruct queue\n{\n    int front, rear, count;\n    char data[MAX];\n};';
+const QPL='#include <stdio.h>\n#include <stdlib.h>\n#define MAX 6\n\nstruct queue\n{\n    int front, rear;\n    int data[MAX];\n};';
+const QCL={
+qi:`void insert(struct queue *q)\n{\n    char ch;\n${EM('q->count == MAX','','Queue overflow')}    printf("Enter a character: ");\n    scanf(" %c", &ch);\n    q->rear = (q->rear + 1) % MAX;\n    q->data[q->rear] = ch;\n    q->count++;\n}`,
+qd:`void delete(struct queue *q)\n{\n${EM('q->count == 0','','Queue underflow')}    printf("Deleted: %c\\n", q->data[q->front]);\n    q->front = (q->front + 1) % MAX;\n    q->count--;\n}`,
+qs:`void display(struct queue *q)\n{\n    int i, f;\n${EM('q->count == 0','','Queue is empty')}    f = q->front;\n    printf("Queue: ");\n    for (i = 0; i < q->count; i++)\n    {\n        printf("%c ", q->data[f]);\n        f = (f + 1) % MAX;\n    }\n    printf("\\n");\n}`};
+const QLL={
+qi:`void enqueue(struct queue *q)\n{\n    int item;\n${EM('q->rear == MAX - 1','','Queue overflow')}    printf("Enter item: ");\n    scanf("%d", &item);\n    q->rear = q->rear + 1;\n    q->data[q->rear] = item;\n}`,
+qd:`void dequeue(struct queue *q)\n{\n${EM('q->front > q->rear','','Queue underflow')}    printf("Deleted: %d\\n", q->data[q->front]);\n    q->front = q->front + 1;\n}`,
+qs:`void display(struct queue *q)\n{\n    int i;\n${EM('q->front > q->rear','','Queue is empty')}    printf("Queue: ");\n    for (i = q->front; i <= q->rear; i++)\n    {\n        printf("%d ", q->data[i]);\n    }\n    printf("\\n");\n}`};
+const KD={S:{r:'first',f:'link'},C:{r:'last',f:'link',circ:1},H:{r:'head',f:'link',hdr:1},HC:{r:'head',f:'link',hdr:1,circ:1},D:{r:'first',f:'rlink',b:'llink'},CD:{r:'first',f:'rlink',b:'llink',circ:1},DH:{r:'head',f:'rlink',b:'llink',hdr:1},CDH:{r:'head',f:'rlink',b:'llink',hdr:1,circ:1}};
+const FAM={
+S:{pre:PS,lib:SL,root:'first',init:[]},C:{pre:PS,lib:CL,root:'last',init:[]},
+H:{pre:PS,lib:N=>HL(N,0),root:'head',hdr:1,init:['head = createNode();','head->link = NULL;']},HC:{pre:PS,lib:N=>HL(N,1),root:'head',hdr:1,init:['head = createNode();','head->link = head;']},
+D:{pre:PD,lib:DL,root:'first',init:[]},CD:{pre:PD,lib:CDL,root:'first',init:[]},
+DH:{pre:PD,lib:N=>DHL(N,0),root:'head',hdr:1,init:['head = createNode();','head->llink = head->rlink = NULL;']},CDH:{pre:PD,lib:N=>DHL(N,1),root:'head',hdr:1,init:['head = createNode();','head->llink = head->rlink = head;']},
+QC:{pre:QPC,lib:()=>QCL,root:'q',q:'c',init:['q.front = 0;','q.rear = -1;','q.count = 0;']},QL:{pre:QPL,lib:()=>QLL,root:'q',q:'l',init:['q.front = 0;','q.rear = -1;']}};
+const OPS={};['cr:iF','iF','iE','dF','dE','dsp','len','srch','dinfo','cat','rev','iR','dR','place','iP','dP','qi','qd','qs'].forEach(s=>{const[a,b]=s.split(':');OPS[a]={f:b||a}});
+const ORD=['iF','iE','dF','dE','dsp','len','srch','dinfo','cat','rev','iR','dR','place','iP','dP','qi','qd','qs'];
+const ALL=['iF','iE','dF','dE','dsp','len','srch','dinfo','cat','rev','iR','dR','place','iP','dP'],O7=['iF','iE','dF','dE','iR','dR','dsp'];
+const PRG=[
+{id:'l7',g:0,n:['Lab 7 · SLL','ಲ್ಯಾಬ್ 7 · SLL'],k:'S',ops:['cr','iF','iE','dF','dE','dsp','len']},
+{id:'l8',g:0,n:['Lab 8 · CSLL','ಲ್ಯಾಬ್ 8 · CSLL'],k:'C',ops:['cr','iR','dR','iE','dE','dsp']},
+{id:'l6',g:0,n:['Lab 6 · Circular Queue','ಲ್ಯಾಬ್ 6 · Circular Queue'],k:'QC',ops:['qi','qd','qs']},
+{id:'sx',g:1,n:['SLL · all operations','SLL · ಎಲ್ಲಾ ಕಾರ್ಯಗಳು'],k:'S',ops:ALL},
+{id:'stk',g:1,n:['Stack using SLL','Stack (SLL)'],k:'S',ops:['iF','dF','dsp'],ren:{iF:'push',dF:'pop'},lb:{iF:['Push','Push (ತಳ್ಳಿ)'],dF:['Pop','Pop (ತೆಗೆಯಿರಿ)'],dsp:['Display stack','Stack ಪ್ರದರ್ಶಿಸಿ']},x:'stk'},
+{id:'que',g:1,n:['Queue using SLL','Queue (SLL)'],k:'S',ops:['iE','dF','dsp'],ren:{iE:'enqueue',dF:'dequeue'},lb:{iE:['Enqueue','Enqueue (ಸೇರಿಸಿ)'],dF:['Dequeue','Dequeue (ತೆಗೆಯಿರಿ)'],dsp:['Display queue','Queue ಪ್ರದರ್ಶಿಸಿ']},x:'que'},
+{id:'deq',g:1,n:['Double-ended queue','Double-ended queue'],k:'S',ops:['iF','iE','dF','dE','dsp'],x:'deq'},
+{id:'sh',g:2,n:['SLL + header','SLL + header'],k:'H',ops:O7},{id:'hc',g:2,n:['CSLL + header','CSLL + header'],k:'HC',ops:O7},
+{id:'dl',g:3,n:['DLL','DLL'],k:'D',ops:O7},{id:'cd',g:3,n:['CDLL','CDLL'],k:'CD',ops:O7},
+{id:'dh',g:3,n:['DLL + header','DLL + header'],k:'DH',ops:O7},{id:'ch',g:3,n:['CDLL + header','CDLL + header'],k:'CDH',ops:O7},
+{id:'lq',g:4,n:['Linear Queue','Linear Queue'],k:'QL',ops:['qi','qd','qs'],lb:{qi:['Enqueue','Enqueue'],qd:['Dequeue','Dequeue']}}];
+const VID=[
+['Linked list: singly, doubly, circular (full tutorial)','Linked list: singly, doubly, circular (ಪೂರ್ಣ ಟ್ಯುಟೋರಿಯಲ್)','Linked List Tutorial - Singly + Doubly + Circular (Theory + Code + Implementation)'],
+['Introduction and types of linked list','Linked list ಪರಿಚಯ ಮತ್ತು ವಿಧಗಳು','Lec-16: Introduction to Linked List | Types and Need of linked list | data structures'],
+['Singly linked list in C','C ನಲ್ಲಿ Singly linked list','Linked List - Implementation in C/C++'],
+['Doubly linked list','Doubly linked list','Introduction to Doubly Linked List'],
+['Circular linked list in C','C ನಲ್ಲಿ Circular linked list','circular linked list in C insert delete display'],
+['Header node linked list','Header node linked list','header node linked list data structures'],
+['Stack using linked list','Linked list ಬಳಸಿ Stack','Data Structures: Linked List implementation of stacks'],
+['Queue using linked list','Linked list ಬಳಸಿ Queue','Queue Data Structure & Operations (Linked List Based) | C Programming Example'],
+['Double-ended queue','Double-ended queue','double ended queue using linked list in C'],
+['Circular queue using array in C','Array ಬಳಸಿ Circular queue','circular queue using array in C'],
+['Reverse a linked list','Linked list reverse ಮಾಡುವುದು','reverse a linked list in C without creating new nodes'],
+['Kannada explanation','ಕನ್ನಡದಲ್ಲಿ ವಿವರಣೆ','linked list data structures in Kannada']];
+
+// ---------- build program text ----------
+const lbl=(o,li)=>(d.lb&&d.lb[o]||OL[o])[li];
+function callText(h){const a=h.params.map(p=>p=='q'?'&q':p).join(', '),c=`${h.name}(${a})`;return h.rt=='NODE'?`${d.F.root} = ${c};`:h.rt=='int'?`printf("Number of nodes = %d\\n", ${c});`:`${c};`}
+function genMain(){const O=d.ops,F=d.F,Ls=[],calls={},need=n=>O.some(o=>d.hd[OPS[o].f].params.includes(n));
+ const vs=['choice',...['item','key','pos'].filter(need),...(O.includes('cr')?['n','i']:[])];
+ Ls.push('int main()','{');
+ F.hdr?Ls.push('    NODE head;'):F.q?Ls.push('    struct queue q;'):Ls.push(`    NODE ${F.root} = NULL${O.includes('cat')?', sec = NULL':''};`);
+ Ls.push(`    int ${vs.join(', ')};`);F.init.forEach(x=>Ls.push('    '+x));
+ Ls.push('','    while (1)','    {','        printf("\\nMENU\\n'+O.map((o,i)=>(i+1)+'. '+lbl(o,0)+'\\n').join('')+(O.length+1)+'. Exit\\n");','        printf("Enter choice: ");','        scanf("%d", &choice);','        switch (choice)','        {');
+ O.forEach((o,i)=>{const h=d.hd[OPS[o].f];Ls.push(`        case ${i+1}:`);
+  if(o=='cr')Ls.push('            printf("Enter number of nodes: ");','            scanf("%d", &n);','            for (i = 0; i < n; i++)','            {','                printf("Enter item: ");','                scanf("%d", &item);');
+  else{if(o=='cat')Ls.push('            sec = NULL;',`            sec = ${d.N.iE}(70, sec);`,`            sec = ${d.N.iE}(80, sec);`);
+   ['item','key','pos'].forEach(v=>{if(h.params.includes(v))Ls.push(`            printf("Enter ${v}: ");`,`            scanf("%d", &${v});`)})}
+  calls[o]=Ls.length;Ls.push((o=='cr'?'                ':'            ')+callText(h));if(o=='cr')Ls.push('            }');Ls.push('            break;')});
+ Ls.push('        default:','            exit(0);','        }','    }','}');return{Ls,calls}}
+function build(p){d={...p};const F=d.F=FAM[d.k];d.K=KD[d.k]||null;d.root=F.root;const N=d.N={...BN,...(p.ren||{})},lib=F.lib(N);d.fx={};d.hd={};
+ const keys=ORD.filter(k=>d.ops.some(o=>OPS[o].f==k)||(k=='iF'&&d.ops.includes('cr'))||(k=='iE'&&d.ops.includes('cat')));d.keys=keys;
+ keys.forEach(k=>{d.fx[k]=lib[k];const m=lib[k].split('\n')[0].match(/^(\w+)\s+(\w+)\((.*)\)$/);d.hd[k]={rt:m[1],name:m[2],params:m[3].split(',').map(s=>s.trim().split(/[\s*]+/).pop())}});
+ const ls=[],add=(key,t)=>t.split('\n').forEach(x=>ls.push({t:x,fn:key}));d.fo={};add('pre',F.pre);
+ keys.forEach(k=>{ls.push({t:'',fn:''});d.fo[k]=ls.length;add(k,d.fx[k])});ls.push({t:'',fn:''});
+ const g=genMain(),mo=ls.length;g.Ls.forEach(x=>ls.push({t:x,fn:'main'}));d.calls={};for(const o in g.calls)d.calls[o]=mo+g.calls[o];d.lines=ls;d.ast={};return d}
+
+// ---------- mini C interpreter ----------
+function tokenize(s){const re=/"(?:[^"\\]|\\.)*"|\d+|[A-Za-z_]\w*|->|==|!=|<=|>=|&&|\|\||\+\+|--|[^\s]/g,T=[];let m;while((m=re.exec(s))){const v=m[0];T.push({v,p:m.index,e:m.index+v.length,t:v[0]=='"'?'s':/\d/.test(v[0])?'n':/[A-Za-z_]/.test(v[0])?'i':'p',ln:s.slice(0,m.index).split('\n').length-1})}return T}
+function parseFn(src){const T=tokenize(src);let i=0;const nx=()=>T[i++],isv=v=>T[i]&&T[i].v===v,eat=v=>{if(!T[i]||T[i].v!==v)throw Error('expected '+v+' near '+(T[i]&&T[i].v));return T[i++]};
+ const sp=f=>{const s=T[i].p,n=f();n.src=src.slice(s,T[i-1].e);return n};
+ const prim=()=>{const t=nx();let n;
+  if(t.t=='n')n={t:'num',v:+t.v};else if(t.v=='NULL')n={t:'null'};else if(t.v=='('){n=expr();eat(')')}
+  else if(t.t=='i'){if(isv('(')){nx();const a=[];while(!isv(')')){a.push(expr());if(isv(','))nx()}eat(')');n={t:'call',n:t.v,a}}else n={t:'var',n:t.v}}else throw Error('bad token '+t.v);
+  for(;;){if(isv('->')){nx();n={t:'fld',b:n,f:nx().v}}else if(isv('[')){nx();const x=expr();eat(']');n={t:'idx',b:n,x}}else break}return n};
+ const un=()=>{if(isv('!')){nx();return{t:'not',e:un()}}if(isv('&')){nx();return un()}if(isv('-')){nx();return{t:'neg',e:un()}}return prim()};
+ const lvl=(ops,nxt)=>()=>{let l=nxt();while(T[i]&&ops.includes(T[i].v)){const o=nx().v,r=nxt();l={t:'bin',o,l,r}}return l};
+ const mul=lvl(['*','%','/'],un),add=lvl(['+','-'],mul),rel=lvl(['<','>','<=','>='],add),eq=lvl(['==','!='],rel),and=lvl(['&&'],eq),or=lvl(['||'],and);
+ const expr=()=>{const s=T[i].p,l=or();if(isv('=')){const le=T[i-1].e;nx();const rs=T[i].p,r=expr();return{t:'asg',l,r,ls:src.slice(s,le),rs:src.slice(rs,T[i-1].e)}}return l};
+ const simple=()=>{const s=T[i].p,e=expr();if(isv('++')||isv('--')){const o=nx().v;return{t:'inc',e,d:o=='++'?1:-1,src:src.slice(s,T[i-1].e)}}return{t:'ex',e}};
+ const TY=['NODE','int','char','struct','void'];
+ const stmt=()=>{const t=T[i],ln=t.ln;
+  if(t.v=='{'){nx();const b=[];while(!isv('}'))b.push(stmt());nx();return{t:'blk',b}}
+  if(t.v=='if'){nx();eat('(');const c=sp(expr);eat(')');const th=stmt();let el=null;if(isv('else')){nx();el=stmt()}return{t:'if',c,th,el,ln}}
+  if(t.v=='while'){nx();eat('(');const c=sp(expr);eat(')');return{t:'while',c,b:stmt(),ln}}
+  if(t.v=='do'){nx();const b=stmt(),wl=T[i].ln;eat('while');eat('(');const c=sp(expr);eat(')');eat(';');return{t:'do',c,b,ln:wl}}
+  if(t.v=='for'){nx();eat('(');const a=simple();eat(';');const c=sp(expr);eat(';');const s=simple();eat(')');return{t:'for',a,c,s,b:stmt(),ln}}
+  if(t.v=='return'){nx();let e=null;if(!isv(';'))e=sp(expr);eat(';');return{t:'ret',e,ln}}
+  if(t.v=='break'){nx();eat(';');return{t:'brk',ln}}
+  if(TY.includes(t.v)){nx();const as=[];for(;;){const nm=nx().v;if(isv('=')){nx();const r=sp(expr);as.push({t:'ex',ln,e:{t:'asg',l:{t:'var',n:nm},r,ls:nm,rs:r.src}})}if(isv(',')){nx();continue}break}eat(';');return as.length?{t:'blk',b:as}:{t:'nop'}}
+  if(t.v=='printf'||t.v=='scanf'){nx();eat('(');const f=nx().v,a=[];let vr=null;while(isv(',')){nx();if(t.v=='scanf'){eat('&');vr=nx().v}else a.push(expr())}eat(')');eat(';');return t.v=='printf'?{t:'pf',f,a,ln}:{t:'sc',f,v:vr,ln}}
+  if(t.v=='free'){nx();eat('(');const e=sp(expr);eat(')');eat(';');return{t:'free',e,ln}}
+  const n=simple();eat(';');n.ln=ln;return n};
+ const rt=nx().v,name=nx().v;eat('(');const params=[];let cur=null;while(!isv(')')){const t=nx();if(t.v==','){params.push(cur);cur=null}else if(t.t=='i')cur=t.v}if(cur)params.push(cur);eat(')');
+ return{rt,name,params,body:stmt()}}
+class Ret{constructor(v){this.v=v}}const BRK={},STOP={};
+function exec(op,inp,G0,o){o=o||{};
+ const fk=OPS[op].f,h=d.hd[fk],ast=o.ast||d.ast[fk]||(d.ast[fk]=parseFn(d.fx[fk])),off=o.ast?0:d.fo[fk],root=d.root,K={MAX:6};let curLn=-1;
+ const N=cl(G0.nodes);let cnt=G0.cnt,out='',steps=[];const M={...G0.env};let E=M;
+ if(op=='cat'){let pv=null;for(const v of [80,70]){const id='n'+(++cnt);N[id]={f:{info:v,link:pv}};pv=id}M.sec=pv}
+ const snap=(ln,m,x)=>steps.push({ln,en:m[0],kn:m[1],N:cl(N),E:cl(E),o:out,...x});
+ const lab=p=>p==null?['NULL','NULL']:!N[p]?['?','?']:N[p].hd?['head','head']:N[p].f.info===undefined?['the new node','ಹೊಸ node']:['node '+N[p].f.info,'node '+N[p].f.info];
+ const dv=v=>isP(v)?lab(v):v===null?['NULL','NULL']:[String(v),String(v)];
+ const nd=p=>{if(p==null||!N[p])throw Error('null');return N[p]};
+ const tr=v=>!(v===null||v===undefined||v===0||v===false||v==='');
+ const ev=e=>{switch(e.t){
+  case'num':return e.v;case'null':return null;
+  case'var':return e.n in K?K[e.n]:E[e.n];
+  case'fld':return nd(ev(e.b)).f[e.f];
+  case'idx':return ev(e.b)[ev(e.x)];
+  case'not':return !tr(ev(e.e));case'neg':return -ev(e.e);
+  case'call':if(e.n=='createNode'){const id='n'+(++cnt);N[id]={f:{}};return id}throw Error('call:'+e.n);
+  case'bin':{if(e.o=='&&')return tr(ev(e.l))&&tr(ev(e.r));if(e.o=='||')return tr(ev(e.l))||tr(ev(e.r));const a=ev(e.l),b=ev(e.r);
+   switch(e.o){case'==':return a===b;case'!=':return a!==b;case'<':return a<b;case'>':return a>b;case'<=':return a<=b;case'>=':return a>=b;case'+':return a+b;case'-':return a-b;case'*':return a*b;case'%':return a%b;case'/':return Math.trunc(a/b)}}
+  case'asg':{const v=ev(e.r);put(e.l,v);return v}}};
+ const put=(l,v)=>{if(l.t=='var')E[l.n]=v;else if(l.t=='fld')nd(ev(l.b)).f[l.f]=v;else if(l.t=='idx')ev(l.b)[ev(l.x)]=v;else throw Error('lhs')};
+ const cmsg=(k,s,c)=>k=='if'?[`if (${s}) is ${c?'TRUE → the block runs':'FALSE → skip the block'}.`,`if (${s}) ${c?'ಸರಿ (TRUE) → block ನಡೆಯುತ್ತದೆ':'ತಪ್ಪು (FALSE) → block ಬಿಟ್ಟುಬಿಡಿ'}.`]:[`${k=='for'?'for':'while'} (${s}) is ${c?'TRUE → the loop body runs':'FALSE → the loop ends'}.`,`${k=='for'?'for':'while'} (${s}) ${c?'ಸರಿ → loop ಒಳಗಿನ ಕೋಡ್ ನಡೆಯುತ್ತದೆ':'ತಪ್ಪು → loop ಮುಗಿಯಿತು'}.`];
+ const amsg=(e,v)=>{const ls=e.ls,rs=e.rs;if(e.r.t=='call')return[`malloc creates a new node; ${ls} points to it.`,`malloc ಮೂಲಕ ಹೊಸ node ಸೃಷ್ಟಿಯಾಯಿತು; ${ls} ಅದನ್ನು ತೋರಿಸುತ್ತದೆ.`];
+  if(isP(v)){const[a,b]=lab(v);return[`${ls} now points to ${a}  (${rs})`,`${ls} ಈಗ ${b} ಅನ್ನು ತೋರಿಸುತ್ತದೆ  (${rs})`]}
+  if(v===null)return[`${ls} is now NULL.`,`${ls} ಈಗ NULL ಆಗಿದೆ.`];return[`${ls} = ${v}.`,`${ls} = ${v}.`]};
+ const loop=(s,k,body)=>{for(;;){curLn=s.ln;const c=tr(ev(s.c));snap(s.ln+off,cmsg(k,s.c.src,c));if(!c)break;try{body()}catch(x){if(x===BRK)break;throw x}}};
+ const ex=s=>{if(steps.length>700)throw STOP;if(s.ln!==undefined)curLn=s.ln;switch(s.t){
+  case'blk':for(const x of s.b)ex(x);break;case'nop':break;
+  case'ex':{const v=ev(s.e);snap(s.ln+off,s.e.t=='asg'?amsg(s.e,v):[s.e.src||'','']);break}
+  case'inc':{const v=ev(s.e)+s.d;put(s.e,v);snap(s.ln+off,[`${s.src}: now ${v}.`,`${s.src}: ಈಗ ${v}.`]);break}
+  case'if':{const c=tr(ev(s.c));snap(s.ln+off,cmsg('if',s.c.src,c));if(c)ex(s.th);else if(s.el)ex(s.el);break}
+  case'while':loop(s,'while',()=>ex(s.b));break;
+  case'for':ex({...s.a,ln:s.ln});loop(s,'for',()=>{ex(s.b);ex({...s.s,ln:s.ln})});break;
+  case'do':for(;;){try{ex(s.b)}catch(x){if(x===BRK)break;throw x}const c=tr(ev(s.c));snap(s.ln+off,cmsg('while',s.c.src,c));if(!c)break}break;
+  case'ret':{const v=s.e?ev(s.e):undefined,sr=s.e?s.e.src:'';const[a,b]=v===undefined?['the function ends.','function ಮುಗಿಯುತ್ತದೆ.']:dv(v);
+   snap(s.ln+off,v===undefined?['return: '+a,'return: '+b]:[`return ${sr}; → returns ${a}`,`return ${sr}; → ${b} ಹಿಂತಿರುಗುತ್ತದೆ`]);throw new Ret(v)}
+  case'brk':snap(s.ln+off,['break: leave the loop now.','break: loop ನಿಂದ ಹೊರಬನ್ನಿ.']);throw BRK;
+  case'pf':{let k=0;const t=s.f.slice(1,-1).replace(/\\n/g,'\n').replace(/\\t/g,'\t').replace(/\\"/g,'"').replace(/%[dc]/g,()=>String(ev(s.a[k++])));out+=t;snap(s.ln+off,['Screen output: '+t.trim(),'ಪರದೆಯ ಮೇಲೆ ಮುದ್ರಣ: '+t.trim()]);break}
+  case'sc':{const c=s.f.includes('%c'),val=s.v=='ch'||c?inp.ch:s.v=='key'?inp.key:s.v=='pos'?inp.pos:inp.item;E[s.v]=val;snap(s.ln+off,[`scanf reads ${s.v} = ${val} (from your input box).`,`scanf ${s.v} = ${val} ಓದುತ್ತದೆ (ನಿಮ್ಮ input box ನಿಂದ).`]);break}
+  case'free':{const p=ev(s.e);const[a,b]=lab(p);nd(p).x=1;snap(s.ln+off,[`free(${s.e.src}): releases ${a} (shown dashed).`,`free(${s.e.src}): ${b} ಮೆಮೊರಿ ಬಿಡುಗಡೆ (ಡ್ಯಾಶ್ ಆಗಿ ತೋರಿಸಿದೆ).`]);break}}};
+ const callTxt=callText(h),cl0=o.ast?-1:d.calls[op];let G1=G0,err='',leak=0,dang=false;
+ try{snap(cl0,[`main() calls ${callTxt}`,`main() ಈ function ಅನ್ನು ಕರೆಯುತ್ತದೆ: ${callTxt}`]);
+  E={};h.params.forEach((n,i)=>{E[ast.params[i]||n]=n=='item'?inp.item:n=='key'?inp.key:n=='pos'?inp.pos:M[n=='q'?'q':n]});
+  let rv;try{ex(ast.body)}catch(x){if(x instanceof Ret)rv=x.v;else throw x}
+  E=M;if(h.rt=='NODE'){M[root]=rv;const[a,b]=lab(rv);snap(cl0,[`main stores the returned value: ${root} → ${a}`,`main ಹಿಂತಿರುಗಿದ ಮೌಲ್ಯ ಸಂಗ್ರಹಿಸುತ್ತದೆ: ${root} → ${b}`])}
+  else if(h.rt=='int'){out+='Number of nodes = '+rv+'\n';snap(cl0,[`returned ${rv}; main prints it.`,`${rv} ಹಿಂತಿರುಗಿತು; main ಅದನ್ನು ಮುದ್ರಿಸುತ್ತದೆ.`])}
+  if(!d.F.q){const rw=rowsOf(N,M);dang=rw.some(r=>r.ids.some(i=>N[i].x))}const keep=gc(N,M[root]||null,M.q);leak=Object.keys(N).filter(i=>!keep[i]&&!N[i].x).length;G1={nodes:keep,env:root=='q'?{q:M.q}:{[root]:M[root]},cnt}}
+ catch(x){if(x===STOP){err='loop';snap(-1,['⏱ Too many steps: the loop may never end (did you forget to move cur?).','⏱ ತುಂಬಾ ಹಂತಗಳು: loop ಮುಗಿಯದಿರಬಹುದು (cur ಸರಿಸಲು ಮರೆತಿರಾ?).'])}else{err=/^call:/.test(x.message)?x.message:x.message=='null'?'null':'other:'+x.message;snap(-1,['💥 Runtime error: a NULL pointer was used (segmentation fault).','💥 ದೋಷ: NULL pointer ಬಳಕೆ (segmentation fault).'])}}
+ const arr=err?[]:listArr(G1.nodes,G1.env);
+ steps.push({ln:-1,en:'✓ Finished.'+(d.F.q?'':' List: '+(arr.length?arr.join(' → '):'empty')),kn:'✓ ಮುಗಿಯಿತು.'+(d.F.q?'':' List: '+(arr.length?arr.join(' → '):'ಖಾಲಿ')),N:cl(G1.nodes),E:cl(G1.env),o:out,done:1});
+ return{steps,G:G1,err,errLn:curLn,leak,dang,out}}
+function gc(N,r,q){const keep={},stk=[r,q];while(stk.length){const p=stk.pop();if(isP(p)&&N[p]&&!keep[p]&&!N[p].x){keep[p]=N[p];for(const k in N[p].f)if(isP(N[p].f[k]))stk.push(N[p].f[k])}}return keep}
+
+// ---------- graph + rendering ----------
+function mkG(vals){const F=d.F;
+ if(F.q)return{nodes:{n1:{f:F.q=='c'?{front:0,rear:2,count:3,data:['A','B','C','','','']}:{front:0,rear:2,data:[10,20,30,'','','']}}},env:{q:'n1'},cnt:1};
+ const K=d.K,nodes={};let c=0;const nw=(i,hd)=>{const id='n'+(++c);nodes[id]={f:i===undefined?{}:{info:i}};if(hd)nodes[id].hd=1;return id};
+ const ns=vals.map(v=>nw(v)),h=F.hdr?nw(undefined,1):null,seq=h?[h,...ns]:ns;
+ seq.forEach((id,i)=>{nodes[id].f[K.f]=seq[i+1]||null;if(K.b)nodes[id].f[K.b]=seq[i-1]||null});
+ if(K.circ&&seq.length){const a=seq[0],z=seq[seq.length-1];nodes[z].f[K.f]=a;if(K.b)nodes[a].f[K.b]=z}
+ const z=seq[seq.length-1];return{nodes,env:{[d.root]:K.r=='last'?(ns.length?z:null):K.r=='head'?h:(seq[0]||null)},cnt:c}}
+function chain(N,s,fw,seen){const ids=[];let p=s;while(isP(p)&&N[p]&&!seen[p]&&ids.length<14){seen[p]=1;ids.push(p);p=N[p].f[fw]}return{ids,end:p===null?'null':isP(p)&&seen[p]?p:'?'}}
+function rowsOf(N,E){const K=d.K,seen={},rows=[];let s=E[d.root];if(K.r=='last'&&isP(s)&&N[s])s=N[s].f.link;
+ if(isP(s))rows.push({...chain(N,s,K.f,seen),m:1});
+ const vs=['temp','cur','prev','second','sec','first','last','head'],names=[...vs,...Object.keys(E).filter(k=>!vs.includes(k))];
+ for(const n of names){const p=E[n];if(isP(p)&&N[p]&&!seen[p])rows.push({...chain(N,p,K.f,seen)})}return rows}
+function listArr(N,E){if(d.F.q){const q=N[E.q].f,r=[];return r}const r=rowsOf(N,E)[0];return r?r.ids.filter(i=>!N[i].hd).map(i=>N[i].f.info):[]}
+const lab2=(N,p)=>!N[p]?'?':N[p].hd?'head':N[p].f.info===undefined?'?':N[p].f.info;
+function tagsOf(E){const t={};for(const k in E){const v=E[k];if(isP(v))(t[v]=t[v]||[]).push(k)}return t}
+function stageHTML(N,E){
+ if(d.F.q){const q=N[E.q].f,c=d.F.q=='c',tg=tagsOf({}) ;let h='<div class="rw">';
+  for(let i=0;i<6;i++){const occ=c?((i-q.front+6)%6)<q.count:(i>=q.front&&i<=q.rear),ts=[];if(i==q.front)ts.push(['front','ac']);if(i==q.rear)ts.push(['rear','cur']);for(const n of['f','i'])if(E[n]===i)ts.push([n,'prv']);
+   h+=`<div class="col"><div class="tags">${ts.map(x=>`<b class="t" style="--c:var(--${x[1]})">${x[0]}</b>`).join('')}</div><div class="node" style="${occ?'':'opacity:.35;border-style:dashed'}"><span class="info">${q.data[i]===''||q.data[i]===undefined?'·':q.data[i]}</span></div><span class="mu">${i}</span></div>`}
+  return h+`</div><div class="mu">front = ${q.front}, rear = ${q.rear}${c?', count = '+q.count:''}, MAX = 6</div>`}
+ const K=d.K,D=!!K.b,rows=rowsOf(N,E),tg=tagsOf(E);let h='';
+ const col={temp:'tmp',cur:'cur',prev:'prv',first:'ac',last:'ac',head:'hd'};
+ const nd=id=>{const n=N[id],ts=(tg[id]||[]).map(x=>`<b class="t" style="--c:var(--${col[x]||'mu'})">${x}</b>`).join('');
+  return`<div class="col"><div class="tags">${ts}</div><div class="node${n.hd?' hd':''}${n.x?' fr':''}${n.f.info===undefined&&!n.hd?' nw':''}">${D?'<i>llink</i>':''}<span class="info">${n.hd?'H':n.f.info===undefined?'?':n.f.info}</span><i>${D?'rlink':'link'}</i></div></div>`};
+ if(!rows.length)return`<div class="rw"><span class="nl">${d.root} = NULL</span></div>`;
+ for(const r of rows){h+='<div class="rw">';r.ids.forEach((id,i)=>{if(i){const bad=D&&N[id].f[K.b]!==r.ids[i-1];h+=`<span class="ar${bad?' bad':''}">${D&&!bad?'⇄':'→'}</span>`}h+=nd(id)});
+  h+=r.end=='null'?'<span class="ar">→</span><span class="nl">NULL</span>':r.end=='?'?'<span class="ar">→</span><span class="nl">?</span>':`<span class="nl">↻ ${lang=='en'?'back to':'ಹಿಂದಕ್ಕೆ'} ${lab2(N,r.end)}</span>`;h+='</div>'}
+ return h}
+function varsTxt(E){return Object.entries(E).filter(([k,v])=>v!==null&&!isP(v)&&v!==undefined).map(([k,v])=>`${k} = ${v}`).join('  ·  ')}
+
+// ---------- Concepts + Practice ----------
+let tb='V',pop='',pr=null,phl=0,pst=[],pix=0;
+Object.assign(T,{
+tC:['📘 Concepts','📘 ಪರಿಕಲ್ಪನೆಗಳು'],tV:['▶ Visualizer','▶ ದೃಶ್ಯೀಕರಣ'],tP:['✍️ Practice','✍️ ಅಭ್ಯಾಸ'],
+bb:['Building blocks: read these once','ಮೂಲ ಅಂಶಗಳು: ಒಮ್ಮೆ ಓದಿ'],fb:['Function by function: how to write it and why every line is there','Function ಒಂದೊಂದಾಗಿ: ಹೇಗೆ ಬರೆಯಬೇಕು ಮತ್ತು ಪ್ರತಿ ಸಾಲು ಏಕೆ'],cm:['Common mistakes','ಸಾಮಾನ್ಯ ತಪ್ಪುಗಳು'],
+pi:['Choose a function, type it yourself, then press Run & check. Your code is tested on many lists or queues. Stuck? Use Hint, and Show answer at the end.','Function ಆಯ್ಕೆಮಾಡಿ, ನೀವೇ ಟೈಪ್ ಮಾಡಿ, ನಂತರ Run & check ಒತ್ತಿ. ನಿಮ್ಮ ಕೋಡ್ ಅನ್ನು ಹಲವು list/queue ಗಳ ಮೇಲೆ ಪರೀಕ್ಷಿಸಲಾಗುತ್ತದೆ. ಸಿಗದಿದ್ದರೆ Hint, ಕೊನೆಗೆ Show answer ಬಳಸಿ.'],
+run:['▶ Run & check','▶ ಓಡಿಸಿ ಪರೀಕ್ಷಿಸಿ'],hint:['💡 Hint','💡 ಸುಳಿವು'],ans:['✅ Show answer','✅ ಉತ್ತರ ತೋರಿಸಿ'],rs:['↺ Starter','↺ ಆರಂಭಿಕ'],
+tk:['Write this function','ಈ function ಬರೆಯಿರಿ'],pass:['All tests passed!','ಎಲ್ಲಾ ಪರೀಕ್ಷೆಗಳು ಪಾಸ್!'],part:['tests passed','ಪರೀಕ್ಷೆಗಳು ಪಾಸ್'],
+watch:['▶ watch my code','▶ ನನ್ನ ಕೋಡ್ ನೋಡಿ'],watchT:['Your code running on the chosen test','ಆಯ್ದ ಪರೀಕ್ಷೆಯಲ್ಲಿ ನಿಮ್ಮ ಕೋಡ್ ಓಡುತ್ತಿದೆ'],
+hi1:['Idea','ಐಡಿಯಾ'],hi2:['Steps in plain words','ಸರಳ ಹಂತಗಳು'],hi3:['First half of the answer','ಉತ್ತರದ ಮೊದಲ ಅರ್ಧ'],
+ansT:['Model answer, with the reason for every line','ಮಾದರಿ ಉತ್ತರ, ಪ್ರತಿ ಸಾಲಿನ ಕಾರಣದೊಂದಿಗೆ'],toV:['▶ See it run in the Visualizer','▶ Visualizer ನಲ್ಲಿ ಓಡುವುದನ್ನು ನೋಡಿ'],
+emp:['Type your function first.','ಮೊದಲು ನಿಮ್ಮ function ಟೈಪ್ ಮಾಡಿ.'],syn:['Syntax problem: ','Syntax ತೊಂದರೆ: '],synh:['Check ; { } ( ) and spelling, then run again.','; { } ( ) ಮತ್ತು ಕಾಗುಣಿತ ಪರೀಕ್ಷಿಸಿ, ಮತ್ತೆ ಓಡಿಸಿ.'],
+npar:['Your function must receive the same number of values as the header shown above.','ನಿಮ್ಮ function ಮೇಲೆ ತೋರಿಸಿದ header ನಷ್ಟೇ ಮೌಲ್ಯಗಳನ್ನು ಪಡೆಯಬೇಕು.'],
+tipE:['Tip: always handle the empty list first.','ಸಲಹೆ: ಯಾವಾಗಲೂ ಮೊದಲು ಖಾಲಿ list ನಿಭಾಯಿಸಿ.'],tip1:['Tip: check the one-node case.','ಸಲಹೆ: ಒಂದೇ node ಇರುವ ಸಂದರ್ಭ ಪರೀಕ್ಷಿಸಿ.'],
+warn:['Memory leak: a removed node was not freed.','Memory leak: ತೆಗೆದ node ಅನ್ನು free ಮಾಡಿಲ್ಲ.']});
+const BB=[
+['What is a node?','Node ಎಂದರೇನು?','A node is a struct with a data part (info) and a pointer part (link) that holds the address of the next node. It points to its own type, so it is a self-referential structure: struct node { int info; struct node *link; };','Node ಎಂದರೆ ಡೇಟಾ (info) ಮತ್ತು ಮುಂದಿನ node ನ ವಿಳಾಸ ಹಿಡಿಯುವ pointer (link) ಇರುವ struct. ತನ್ನದೇ ಪ್ರಕಾರವನ್ನು ತೋರಿಸುವುದರಿಂದ ಇದು self-referential structure: struct node { int info; struct node *link; };','l'],
+['Why typedef struct node *NODE?','typedef struct node *NODE ಏಕೆ?','typedef gives a short name: NODE means “pointer to struct node”, so we write NODE first; instead of struct node *first;','typedef ಚಿಕ್ಕ ಹೆಸರು ಕೊಡುತ್ತದೆ: NODE = “struct node ಗೆ pointer”. ಆದ್ದರಿಂದ struct node *first; ಬದಲು NODE first; ಎಂದು ಬರೆಯುತ್ತೇವೆ.','l'],
+['Why createNode()?','createNode() ಏಕೆ?','Every new node needs memory. malloc gives memory from the heap and returns its address; we check for NULL (no memory left) and exit. createNode() hides this so insert functions stay short.','ಪ್ರತಿ ಹೊಸ node ಗೆ ಮೆಮೊರಿ ಬೇಕು. malloc heap ನಿಂದ ಮೆಮೊರಿ ಕೊಟ್ಟು ವಿಳಾಸ ಹಿಂತಿರುಗಿಸುತ್ತದೆ; NULL ಆದರೆ (ಮೆಮೊರಿ ಇಲ್ಲ) exit ಮಾಡುತ್ತೇವೆ. createNode() ಇದನ್ನು ಮರೆಮಾಡಿ insert function ಚಿಕ್ಕದಾಗಿರಿಸುತ್ತದೆ.','l'],
+['What are NULL and an empty list?','NULL ಮತ್ತು ಖಾಲಿ list ಎಂದರೇನು?','NULL means “points to nothing”. first == NULL means the list is empty. The last node’s link is NULL so a loop knows where to stop.','NULL = “ಯಾವುದನ್ನೂ ತೋರಿಸುವುದಿಲ್ಲ”. first == NULL ಎಂದರೆ list ಖಾಲಿ. ಕೊನೆಯ node ನ link NULL ಆದ್ದರಿಂದ loop ಎಲ್ಲಿ ನಿಲ್ಲಬೇಕೆಂದು ತಿಳಿಯುತ್ತದೆ.','l'],
+['What does -> mean?','-> ಎಂದರೇನು?','p->info means “go to the node p points to and read its info”. Use -> with pointers (temp->info) and . with plain structs (q.front).','p->info = “p ತೋರಿಸುವ node ಗೆ ಹೋಗಿ ಅದರ info ಓದು”. pointer ಗೆ -> (temp->info), ಸಾಮಾನ್ಯ struct ಗೆ . (q.front).'],
+['Why do functions return first?','Function ಗಳು first ಅನ್ನು ಏಕೆ return ಮಾಡುತ್ತವೆ?','C passes a copy of first to the function. Changing the copy does not change main’s first. So the function returns the new first and main stores it: first = insert_front(item, first);','C ನಲ್ಲಿ function ಗೆ first ನ ನಕಲು ಹೋಗುತ್ತದೆ. ನಕಲು ಬದಲಿಸಿದರೆ main ನ first ಬದಲಾಗುವುದಿಲ್ಲ. ಆದ್ದರಿಂದ ಹೊಸ first ಅನ್ನು return ಮಾಡಿ main ನಲ್ಲಿ first = insert_front(item, first); ಎಂದು ಸಂಗ್ರಹಿಸುತ್ತೇವೆ.','l'],
+['Why check the empty list first?','ಮೊದಲು ಖಾಲಿ list ಏಕೆ ಪರೀಕ್ಷಿಸಬೇಕು?','first->info or first->link on an empty list uses NULL and crashes (segmentation fault). Always test first == NULL before touching a node.','ಖಾಲಿ list ನಲ್ಲಿ first->info ಅಥವಾ first->link ಬಳಸಿದರೆ NULL ಬಳಕೆಯಾಗಿ ಪ್ರೋಗ್ರಾಂ crash ಆಗುತ್ತದೆ. Node ಮುಟ್ಟುವ ಮೊದಲು ಯಾವಾಗಲೂ first == NULL ಪರೀಕ್ಷಿಸಿ.','l'],
+['Why does the order of two link lines matter?','ಎರಡು link ಸಾಲುಗಳ ಕ್ರಮ ಏಕೆ ಮುಖ್ಯ?','Connect the new node forward first (temp->link = first), then change the old pointer (first = temp). If you reverse them you lose the rest of the list.','ಮೊದಲು ಹೊಸ node ಅನ್ನು ಮುಂದಕ್ಕೆ ಜೋಡಿಸಿ (temp->link = first), ನಂತರ ಹಳೆಯ pointer ಬದಲಿಸಿ (first = temp). ಕ್ರಮ ಉಲ್ಟಾ ಮಾಡಿದರೆ ಉಳಿದ list ಕಳೆದುಹೋಗುತ್ತದೆ.','l'],
+['Why cur and prev?','cur ಮತ್ತು prev ಏಕೆ?','cur walks the list. A singly list cannot go backwards, so prev remembers the node behind cur. It is needed to delete the last node or a node in the middle.','cur list ನಲ್ಲಿ ಸಂಚರಿಸುತ್ತದೆ. Singly list ನಲ್ಲಿ ಹಿಂದೆ ಹೋಗಲಾಗದ ಕಾರಣ cur ನ ಹಿಂದಿನ node ಅನ್ನು prev ನೆನಪಿಡುತ್ತದೆ. ಕೊನೆಯ ಅಥವಾ ನಡುವಿನ node ಅಳಿಸಲು ಇದು ಬೇಕು.','l'],
+['Why free()?','free() ಏಕೆ?','A deleted node still occupies memory. free(node) gives it back. Print its info before free, because afterwards the data is gone. Forgetting free is a memory leak.','ಅಳಿಸಿದ node ಇನ್ನೂ ಮೆಮೊರಿ ಹಿಡಿದಿರುತ್ತದೆ. free(node) ಅದನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ. free ಮೊದಲು info ಮುದ್ರಿಸಿ; ನಂತರ ಡೇಟಾ ಸಿಗುವುದಿಲ್ಲ. free ಮರೆತರೆ memory leak.','l'],
+['Four steps to write any function','ಯಾವುದೇ function ಬರೆಯಲು 4 ಹಂತಗಳು','1) List the cases: empty, one node, many nodes. 2) Draw the list before and after. 3) Write the pointer changes: new node first, old pointers next. 4) Return the new start pointer.','1) ಸಂದರ್ಭ ಪಟ್ಟಿ ಮಾಡಿ: ಖಾಲಿ, ಒಂದೇ node, ಹೆಚ್ಚು node. 2) ಮೊದಲು ಮತ್ತು ನಂತರದ list ಚಿತ್ರ ಬರೆಯಿರಿ. 3) pointer ಬದಲಾವಣೆ ಬರೆಯಿರಿ: ಹೊಸ node ಮೊದಲು, ಹಳೆಯ pointer ನಂತರ. 4) ಹೊಸ start pointer return ಮಾಡಿ.','l'],
+['Circular, doubly and header: what changes?','Circular, doubly, header: ಏನು ಬದಲಾಗುತ್ತದೆ?','Circular: loops stop when you are back at the start (first, last or head), not at NULL. Doubly: every insert or delete fixes two links (llink and rlink) of each neighbour. Header: a data-less head node, so the front never needs a special case.','Circular: loop NULL ನಲ್ಲಿ ಅಲ್ಲ, ಆರಂಭಕ್ಕೆ (first, last ಅಥವಾ head) ಮರಳಿದಾಗ ನಿಲ್ಲುತ್ತದೆ. Doubly: ಪ್ರತಿ insert/delete ನಲ್ಲಿ ನೆರೆಯವರ ಎರಡು link (llink, rlink) ಸರಿಪಡಿಸಿ. Header: ಡೇಟಾ ಇಲ್ಲದ head node, ಆದ್ದರಿಂದ ಮುಂಭಾಗಕ್ಕೆ ವಿಶೇಷ ಸಂದರ್ಭ ಬೇಡ.','x'],
+['Queue in an array: the key ideas','Array queue: ಮುಖ್ಯ ಅಂಶಗಳು','front is where we delete, rear is where we insert. Check overflow (full) before insert and underflow (empty) before delete. In the circular queue the index wraps with % MAX, and count tells full (count == MAX) or empty (count == 0).','front ನಲ್ಲಿ ಅಳಿಸುತ್ತೇವೆ, rear ನಲ್ಲಿ ಸೇರಿಸುತ್ತೇವೆ. Insert ಮೊದಲು overflow (ತುಂಬಿದೆ), delete ಮೊದಲು underflow (ಖಾಲಿ) ಪರೀಕ್ಷಿಸಿ. Circular queue ನಲ್ಲಿ index % MAX ನಿಂದ ಸುತ್ತುತ್ತದೆ; count == MAX ತುಂಬಿದೆ, count == 0 ಖಾಲಿ.','q']];
+const CM={
+iF:['Writing first = temp before temp->link = first (the old list is lost). Forgetting return temp.','temp->link = first ಮೊದಲು first = temp ಬರೆಯುವುದು (ಹಳೆಯ list ಕಳೆಯುತ್ತದೆ). return temp ಮರೆಯುವುದು.'],
+iE:['Not handling the empty list (cur is NULL, then cur->link crashes). Looping while cur != NULL instead of cur->link != NULL.','ಖಾಲಿ list ನಿಭಾಯಿಸದಿರುವುದು (cur NULL ಆಗಿ cur->link crash). cur->link != NULL ಬದಲು cur != NULL ವರೆಗೆ loop ಮಾಡುವುದು.'],
+dF:['Calling free(first) and then using first->info or first->link. Not checking first == NULL.','free(first) ನಂತರ first->info ಅಥವಾ first->link ಬಳಸುವುದು. first == NULL ಪರೀಕ್ಷಿಸದಿರುವುದು.'],
+dE:['Forgetting the one-node case (prev stays NULL and prev->link crashes). Forgetting prev->link = NULL.','ಒಂದೇ node ಸಂದರ್ಭ ಮರೆಯುವುದು (prev NULL ಆಗಿ prev->link crash). prev->link = NULL ಮರೆಯುವುದು.'],
+iR:['Changing cur->link before temp->link = cur->link (the rest of the list is lost). Not checking that the key was found.','temp->link = cur->link ಮೊದಲು cur->link ಬದಲಿಸುವುದು (ಉಳಿದ list ಕಳೆಯುತ್ತದೆ). key ಸಿಕ್ಕಿದೆಯೇ ಪರೀಕ್ಷಿಸದಿರುವುದು.'],
+dR:['Not checking cur->link == NULL (nothing to delete on the right). Forgetting free(temp).','cur->link == NULL ಪರೀಕ್ಷಿಸದಿರುವುದು (ಬಲಕ್ಕೆ ಅಳಿಸಲು ಏನೂ ಇಲ್ಲ). free(temp) ಮರೆಯುವುದು.'],
+dsp:['Moving first itself instead of cur (the list is lost). Forgetting cur = cur->link (infinite loop).','cur ಬದಲು first ಅನ್ನೇ ಸರಿಸುವುದು (list ಕಳೆಯುತ್ತದೆ). cur = cur->link ಮರೆಯುವುದು (ಅನಂತ loop).'],
+rev:['Not saving temp = first->link before changing first->link.','first->link ಬದಲಿಸುವ ಮೊದಲು temp = first->link ಉಳಿಸದಿರುವುದು.'],
+qi:['Not checking overflow before storing; forgetting % MAX in the circular queue.','ಸಂಗ್ರಹಿಸುವ ಮೊದಲು overflow ಪರೀಕ್ಷಿಸದಿರುವುದು; circular queue ನಲ್ಲಿ % MAX ಮರೆಯುವುದು.'],
+qd:['Not checking underflow; forgetting count-- in the circular queue.','underflow ಪರೀಕ್ಷಿಸದಿರುವುದು; circular queue ನಲ್ಲಿ count-- ಮರೆಯುವುದು.']};
+const RUL=[
+[/^(NODE|void|int) \w+\(.*\)$/,'Function header: its name, what it receives and what it returns. List functions receive the start pointer and return the new start pointer.','Function header: ಹೆಸರು, ಪಡೆಯುವುದು ಮತ್ತು ಹಿಂತಿರುಗಿಸುವುದು. List function ಗಳು start pointer ಪಡೆದು ಹೊಸ start pointer return ಮಾಡುತ್ತವೆ.'],
+[/^(NODE|int|char|struct queue) [\w, *]+;$/,'Local helper variables of this function (temp = new or removed node, cur = walker, prev = one behind cur).','ಈ function ನ ಸಹಾಯಕ variable ಗಳು (temp = ಹೊಸ/ತೆಗೆಯುವ node, cur = ಸಂಚರಿಸುವುದು, prev = cur ನ ಹಿಂದಿನದು).'],
+[/^int \w+ = 0;$/,'A counter that starts at 0.','0 ಇಂದ ಆರಂಭವಾಗುವ counter.'],
+[/^(\w+) = createNode\(\);$/,'Ask malloc (through createNode) for a new node; $1 holds its address.','malloc (createNode ಮೂಲಕ) ನಿಂದ ಹೊಸ node ಪಡೆಯಿರಿ; $1 ಅದರ ವಿಳಾಸ ಹಿಡಿಯುತ್ತದೆ.'],
+[/^(\w+)->info = item;$/,'Store the data (item) in the info part of $1.','$1 ನ info ಭಾಗದಲ್ಲಿ ಡೇಟಾ (item) ಇಡಿ.'],
+[/^(\w+)->llink = \1->rlink = (\w+);$/,'The new node has no neighbours yet: llink and rlink both become $2 (NULL, or itself/head in a circular list).','ಹೊಸ node ಗೆ ಇನ್ನೂ ನೆರೆಯ node ಇಲ್ಲ: llink ಮತ್ತು rlink ಎರಡೂ $2 ಆಗುತ್ತವೆ (NULL, ಅಥವಾ circular ನಲ್ಲಿ ತನಗೇ / head ಗೆ).'],
+[/^(\w+)->(link|rlink) = NULL;$/,'$1 will be the last node, so its $2 is NULL: nothing comes after it.','$1 ಕೊನೆಯ node ಆಗುವುದರಿಂದ ಅದರ $2 NULL: ಅದರ ನಂತರ ಏನೂ ಇಲ್ಲ.'],
+[/^if \((\w+) == NULL\)$/,'Case: is the list empty? $1 == NULL means there is no node at all.','ಸಂದರ್ಭ: list ಖಾಲಿಯೇ? $1 == NULL ಎಂದರೆ ಒಂದೂ node ಇಲ್ಲ.'],
+[/^if \((\w+)->(link|rlink) == NULL\)$/,'Case: only one node? Its $2 is NULL, so nothing follows it.','ಸಂದರ್ಭ: ಒಂದೇ node ಇದೆಯೇ? ಅದರ $2 NULL, ಅಂದರೆ ಅದರ ನಂತರ ಏನೂ ಇಲ್ಲ.'],
+[/^if \((\w+)->(link|rlink) == (\w+)\)$/,'Is there only one node? Its $2 comes straight back to $3 (itself or head).','ಒಂದೇ node ಇದೆಯೇ? ಅದರ $2 ನೇರವಾಗಿ $3 ಗೆ (ತನಗೇ ಅಥವಾ head ಗೆ) ಮರಳುತ್ತದೆ.'],
+[/^if \(cur == (NULL|head)\)$/,'Key not found: cur ran past the list.','Key ಸಿಗಲಿಲ್ಲ: cur list ದಾಟಿ ಹೋಯಿತು.'],
+[/^if \(cur->info != key\)$/,'Key not found: the walk ended without meeting a node whose info is key.','Key ಸಿಗಲಿಲ್ಲ: info = key ಇರುವ node ಸಿಗದೆ ಸಂಚಾರ ಮುಗಿಯಿತು.'],
+[/^if \(cur == (NULL|head) \|\| cur->(link|rlink) == (NULL|head)\)$/,'Nothing to delete on the right: the key is missing or cur is the last node.','ಬಲಕ್ಕೆ ಅಳಿಸಲು ಏನೂ ಇಲ್ಲ: key ಇಲ್ಲ ಅಥವಾ cur ಕೊನೆಯ node.'],
+[/^if \(cur->info != key \|\|.*\)$/,'Key missing, or cur is the only node: the node on its right cannot be deleted.','Key ಇಲ್ಲ, ಅಥವಾ cur ಒಂದೇ node: ಅದರ ಬಲದ node ಅಳಿಸಲಾಗದು.'],
+[/^if \(temp == (\w+)\)$/,'Is the removed node also $1? Then $1 must be moved as well.','ತೆಗೆಯುವ node $1 ಕೂಡ ಆಗಿದೆಯೇ? ಹಾಗಿದ್ದರೆ $1 ಅನ್ನೂ ಸರಿಸಬೇಕು.'],
+[/^if \((.+)\)$/,'Check this condition: $1','ಈ ಷರತ್ತು ಪರೀಕ್ಷಿಸಿ: $1'],
+[/^else$/,'Otherwise (the other case).','ಇಲ್ಲದಿದ್ದರೆ (ಇನ್ನೊಂದು ಸಂದರ್ಭ).'],
+[/^cur = (first|head|last->link|head->link|head->rlink);$/,'Start walking: cur begins at $1.','ಸಂಚಾರ ಶುರು: cur $1 ನಿಂದ ಆರಂಭ.'],
+[/^(\w+) = \1->(link|rlink);$/,'Move $1 one node ahead (follow its $2).','$1 ಅನ್ನು ಒಂದು node ಮುಂದೆ ಸರಿಸಿ ($2 ಅನುಸರಿಸಿ).'],
+[/^prev = cur;$/,'prev remembers the node cur is about to leave (one step behind).','cur ಬಿಟ್ಟುಹೋಗುವ node ಅನ್ನು prev ನೆನಪಿಡುತ್ತದೆ (ಒಂದು ಹೆಜ್ಜೆ ಹಿಂದೆ).'],
+[/^prev = NULL;$/,'prev starts as NULL: nothing is behind the first node.','prev NULL ನಿಂದ ಶುರು: ಮೊದಲ node ನ ಹಿಂದೆ ಏನೂ ಇಲ್ಲ.'],
+[/^prev = head;$/,'prev starts at the header, one step behind cur.','prev header ನಿಂದ ಶುರು, cur ಗಿಂತ ಒಂದು ಹೆಜ್ಜೆ ಹಿಂದೆ.'],
+[/^temp = first;$/,'Remember the first node in temp so it can be freed later.','ಮೊದಲ node ಅನ್ನು temp ನಲ್ಲಿ ನೆನಪಿಡಿ, ನಂತರ free ಮಾಡಲು.'],
+[/^temp = cur->(link|rlink);$/,'temp = the node on the right of cur: the one to delete.','temp = cur ನ ಬಲದ node: ಅಳಿಸಬೇಕಾದದ್ದು.'],
+[/^temp = first->link;$/,'Save the rest of the list in temp before the link is changed.','link ಬದಲಿಸುವ ಮೊದಲು ಉಳಿದ list ಅನ್ನು temp ನಲ್ಲಿ ಉಳಿಸಿ.'],
+[/^(\w+) = (\w+)->(link|rlink|llink);$/,'$1 now points to the node that $2 reaches through $3.','$1 ಈಗ $2 ಯಾವ node ಗೆ $3 ಮೂಲಕ ತಲುಪುತ್ತದೋ ಅದನ್ನು ತೋರಿಸುತ್ತದೆ.'],
+[/^(\w+) = (\w+);$/,'$1 now points to the same node as $2.','$1 ಈಗ $2 ತೋರಿಸುವ node ಅನ್ನೇ ತೋರಿಸುತ್ತದೆ.'],
+[/^(\w+)->(link|rlink) = temp->\2;$/,'Skip over temp: $1 now links to the node after temp.','$1 ಈಗ temp ನ ನಂತರದ node ಗೆ ಜೋಡಿಸಿದೆ: temp ಅನ್ನು ಬಿಟ್ಟುಹೋಗಿ.'],
+[/^temp->(link|rlink) = (\w+)->\1;$/,'The new node takes over what $2 pointed to, so the rest of the list stays connected. Do this BEFORE changing $2.','ಹೊಸ node $2 ತೋರಿಸುತ್ತಿದ್ದದ್ದನ್ನೇ ತೋರಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ಉಳಿದ list ಜೋಡಣೆಯಲ್ಲೇ ಇರುತ್ತದೆ. $2 ಬದಲಿಸುವ ಮೊದಲು ಇದನ್ನು ಮಾಡಿ.'],
+[/^temp->(link|rlink) = (first|head->link|last->link|head);$/,'Connect the new node forward to the old first node so the old list is not lost.','ಹೊಸ node ಅನ್ನು ಹಳೆಯ ಮೊದಲ node ಗೆ ಮುಂದಕ್ಕೆ ಜೋಡಿಸಿ, ಇದರಿಂದ ಹಳೆಯ list ಕಳೆದುಹೋಗುವುದಿಲ್ಲ.'],
+[/^(\w+)->(link|rlink) = (\w+)->\2;$/,'Bypass: $1 now links to whatever $3 linked to, so the node in between is skipped.','$1 ಈಗ $3 ಯಾವುದಕ್ಕೆ ಜೋಡಿಸಿತ್ತೋ ಅದಕ್ಕೆ ಜೋಡಿಸಿದೆ: ನಡುವಿನ node ಅನ್ನು ಬಿಟ್ಟುಹೋಗಿ.'],
+[/^(\w+)->(link|rlink) = temp;$/,'Connect the existing node $1 to the new node temp.','ಈಗಿರುವ node $1 ಅನ್ನು ಹೊಸ node temp ಗೆ ಜೋಡಿಸಿ.'],
+[/^(\w+)->llink = (\w+);$/,'Fix the back link: $1’s llink = $2, so both directions agree.','ಹಿಂದಿನ link ಸರಿಪಡಿಸಿ: $1 ನ llink = $2, ಎರಡೂ ದಿಕ್ಕು ಹೊಂದಿಕೆಯಾಗಲು.'],
+[/^q->data\[q->rear\] = (\w+);$/,'Store $1 in the cell that rear points to.','rear ತೋರಿಸುವ ಕೋಶದಲ್ಲಿ $1 ಇಡಿ.'],
+[/^q->rear = \(q->rear \+ 1\) % MAX;$/,'Move rear one cell ahead; % MAX wraps it to 0 after the last cell (circular).','rear ಅನ್ನು ಒಂದು ಕೋಶ ಮುಂದೆ ಸರಿಸಿ; % MAX ಕೊನೆಯ ಕೋಶದ ನಂತರ 0 ಗೆ ಸುತ್ತಿಸುತ್ತದೆ (circular).'],
+[/^q->front = \(q->front \+ 1\) % MAX;$/,'Move front one cell ahead (wrapping with % MAX).','front ಅನ್ನು ಒಂದು ಕೋಶ ಮುಂದೆ ಸರಿಸಿ (% MAX ಸುತ್ತುತ್ತದೆ).'],
+[/^q->rear = q->rear \+ 1;$/,'Move rear one cell ahead.','rear ಅನ್ನು ಒಂದು ಕೋಶ ಮುಂದೆ ಸರಿಸಿ.'],
+[/^q->front = q->front \+ 1;$/,'Move front one cell ahead.','front ಅನ್ನು ಒಂದು ಕೋಶ ಮುಂದೆ ಸರಿಸಿ.'],
+[/^q->count\+\+;$/,'One more element in the queue.','queue ನಲ್ಲಿ ಒಂದು ಅಂಶ ಹೆಚ್ಚು.'],
+[/^q->count--;$/,'One element less in the queue.','queue ನಲ್ಲಿ ಒಂದು ಅಂಶ ಕಡಿಮೆ.'],
+[/^f = \(f \+ 1\) % MAX;$/,'Next cell (wraps around).','ಮುಂದಿನ ಕೋಶ (ಸುತ್ತುತ್ತದೆ).'],
+[/^f = q->front;$/,'f walks from the front.','f front ನಿಂದ ಸಂಚರಿಸುತ್ತದೆ.'],
+[/^(\w+)->(\w+)->(\w+) = (\w+);$/,'Fix the neighbour: go through $1->$2 and set its $3 to $4.','ನೆರೆಯವರನ್ನು ಸರಿಪಡಿಸಿ: $1->$2 ಮೂಲಕ ಹೋಗಿ ಅದರ $3 ಅನ್ನು $4 ಮಾಡಿ.'],
+[/^(\w+)->(\w+) = (\w+);$/,'Rewire: $1’s $2 now points to $3.','ಮರುಜೋಡಣೆ: $1 ನ $2 ಈಗ $3 ಅನ್ನು ತೋರಿಸುತ್ತದೆ.'],
+[/^return NULL;$/,'Return NULL: the list is empty now (or there was nothing to do).','NULL return: list ಈಗ ಖಾಲಿ (ಅಥವಾ ಮಾಡಲು ಏನೂ ಇರಲಿಲ್ಲ).'],
+[/^return temp;$/,'Return temp: when inserting at the front (or into an empty list) the new node becomes the new first.','temp return: ಮುಂದೆ (ಅಥವಾ ಖಾಲಿ list ಗೆ) ಸೇರಿಸಿದಾಗ ಹೊಸ node ಹೊಸ first ಆಗುತ್ತದೆ.'],
+[/^return (first|last|head|second|prev|cur|sec);$/,'Return $1: the start pointer after this operation. main stores it.','$1 return: ಈ operation ನಂತರದ start pointer. main ಅದನ್ನು ಸಂಗ್ರಹಿಸುತ್ತದೆ.'],
+[/^return (\d+|ecount);$/,'Return the counted value.','ಎಣಿಸಿದ ಮೌಲ್ಯ return.'],
+[/^return;$/,'Stop the function here (it returns nothing).','function ಇಲ್ಲಿಗೇ ನಿಲ್ಲುತ್ತದೆ (ಏನನ್ನೂ ಹಿಂತಿರುಗಿಸುವುದಿಲ್ಲ).'],
+[/^free\((\w+)\);$/,'free($1): give the node’s memory back so there is no memory leak.','free($1): node ನ ಮೆಮೊರಿ ಹಿಂದಿರುಗಿಸಿ, memory leak ಆಗದಂತೆ.'],
+[/^printf\("Item deleted.*$/,'Print the deleted item BEFORE free: afterwards the data is gone.','ಅಳಿಸಿದ item ಅನ್ನು free ಮೊದಲು ಮುದ್ರಿಸಿ: ನಂತರ ಡೇಟಾ ಸಿಗುವುದಿಲ್ಲ.'],
+[/^printf\("Item %d\\n", (\w+)->info\);$/,'Print the info of the node $1 points to.','$1 ತೋರಿಸುವ node ನ info ಮುದ್ರಿಸಿ.'],
+[/^printf\("(.*)\\n"\);$/,'Message for the user: $1.','ಬಳಕೆದಾರರಿಗೆ ಸಂದೇಶ: $1.'],
+[/^printf.*$/,'Print to the screen.','ಪರದೆಗೆ ಮುದ್ರಿಸಿ.'],
+[/^scanf.*$/,'Read what the user types into a variable (& = its address).','ಬಳಕೆದಾರ ಟೈಪ್ ಮಾಡಿದ್ದನ್ನು variable ಗೆ ಓದಿ (& = ಅದರ ವಿಳಾಸ).'],
+[/^(\w+)\+\+;$/,'Add 1 to $1.','$1 ಗೆ 1 ಸೇರಿಸಿ.'],
+[/^(\w+)--;$/,'Subtract 1 from $1.','$1 ನಿಂದ 1 ಕಳೆಯಿರಿ.'],
+[/^while \((\w+)->(link|rlink) != (\w+)\)$/,'Keep moving until $1’s $2 reaches $3: then $1 is the last node.','$1 ನ $2 ಯು $3 ತಲುಪುವವರೆಗೆ ಸರಿಸುತ್ತಿರಿ: ಆಗ $1 ಕೊನೆಯ node.'],
+[/^while \(cur != (NULL|head) && cur->info != key\)$/,'Walk until cur falls off the list or finds the node whose info is key.','cur list ಹೊರಗೆ ಹೋಗುವವರೆಗೆ ಅಥವಾ info = key ಇರುವ node ಸಿಗುವವರೆಗೆ ಸಂಚರಿಸಿ.'],
+[/^while \((.*)\)$/,'Loop: repeat while $1.','Loop: $1 ಸರಿ ಇರುವವರೆಗೆ ಪುನರಾವರ್ತಿಸಿ.'],
+[/^do$/,'do-while: the body runs first, then the condition is tested.','do-while: ಮೊದಲು ಒಳಗಿನ ಕೋಡ್ ನಡೆಯುತ್ತದೆ, ನಂತರ ಷರತ್ತು ಪರೀಕ್ಷೆ.'],
+[/^\} while \(.*\);$/,'Stop when we are back at the start of the circle.','ವೃತ್ತದ ಆರಂಭಕ್ಕೆ ಮರಳಿದಾಗ ನಿಲ್ಲಿಸಿ.'],
+[/^break;$/,'Leave the loop right now.','ಈಗಲೇ loop ನಿಂದ ಹೊರಬನ್ನಿ.'],
+[/^for \((.*)\)$/,'for loop: $1','for loop: $1']];
+function why(x){const s=x.trim();if(!s||/^[{}]$/.test(s))return null;for(const[r,e,k]of RUL){const m=s.match(r);if(m)return[e.replace(/\$(\d)/g,(_,i)=>m[i]||''),k.replace(/\$(\d)/g,(_,i)=>m[i]||'')]}return null}
+function whyHTML(fk){const l=lang=='en'?0:1;return d.fx[fk].split('\n').map(x=>{const w=why(x);return w?`<div class="wl"><code>${esc(x)}</code><span>${esc(w[l])}</span></div>`:''}).join('')}
+function renderC(){const l=lang=='en'?0:1,sc=d.F.q?'q':'l';
+ const bb=BB.filter(b=>!b[4]||b[4]==sc||(b[4]=='x'&&!d.F.q&&(d.K.circ||d.K.b||d.F.hdr)));
+ $('pC').innerHTML=`<div class="card"><b>${d.n[l]}</b><div>${L(FI[d.k])}${d.x?'<br>'+L(XI[d.x]):''}</div></div><div class="card"><b>${L(T.bb)}</b>${bb.map(b=>`<details><summary>${b[l]}</summary><div>${b[2+l]}</div></details>`).join('')}</div><div class="card"><b>${L(T.fb)}</b>${d.keys.map(k=>`<details><summary>${esc(d.hd[k].name)}() · ${lbl(k,l)}</summary><div class="mu">${L(OI[k])}</div>${whyHTML(k)}${CM[k]?`<div class="wl"><b>${L(T.cm)}</b><div>${L(CM[k])}</div></div>`:''}</details>`).join('')}</div>`}
+function tab(x){tb=x;['V','C','P'].forEach(k=>$('p'+k).hidden=k!=x);render()}
+function toV(o){tab('V');go(o)}
+// ----- practice -----
+const stripC=s=>s.replace(/\/\*[\s\S]*?\*\//g,m=>m.replace(/[^\n]/g,' ')).replace(/\/\/[^\n]*/g,m=>' '.repeat(m.length));
+function starter(){return d.fx[OPS[pop].f].split('\n')[0]+'\n{\n    \n}'}
+function pClear(){pr=null;phl=0;pst=[];$('pres').innerHTML='';$('phint').innerHTML='';$('pwatch').hidden=true;$('pans').hidden=true}
+function pInit(){pop=d.ops.find(o=>o!='cr');$('ped').value=starter();pClear()}
+function pSel(o){pop=o;$('ped').value=starter();pClear();renderP()}
+function pReset(){$('ped').value=starter()}
+function ins(t){const e=$('ped'),s=e.selectionStart||0,n=e.selectionEnd||0;e.value=e.value.slice(0,s)+t+e.value.slice(n);e.focus();e.selectionStart=e.selectionEnd=s+t.length}
+$('ped').onkeydown=ev=>{if(ev.key=='Tab'){ev.preventDefault();ins('    ')}else if(ev.key=='Enter'){const e=ev.target,ln=e.value.slice(0,e.selectionStart).split('\n').pop(),ind=ln.match(/^\s*/)[0]+(ln.trimEnd().endsWith('{')?'    ':'');ev.preventDefault();ins('\n'+ind)}};
+function renderP(){const l=lang=='en'?0:1,fk=OPS[pop].f;$('pint').textContent=L(T.pi);
+ $('pops').innerHTML=d.ops.filter(o=>o!='cr').map(o=>`<button class="op ${o==pop?'on':''}" onclick="pSel('${o}')">${lbl(o,l)}</button>`).join('');
+ $('ptask').innerHTML=`<b>${L(T.tk)}:</b> <code>${esc(d.fx[fk].split('\n')[0])}</code><div class="mu">${L(OI[fk])}</div>`;
+ const fl=d.K?[d.K.f,...(d.K.b?[d.K.b]:[])]:['front','rear','count','data','MAX'],bt=['temp','cur','prev',d.root,...fl,'->','info','NULL','createNode()','item','key','{','}','(',')',';',' = ',' == ',' != ','&&','return ','while (','if (','else','free(','printf('];
+ $('ptool').innerHTML=bt.map(t=>`<button class="sn" onmousedown="event.preventDefault()" onclick="ins(${JSON.stringify(t).replace(/"/g,'&quot;')})">${esc(t.trim())}</button>`).join('');
+ for(const[a,b]of[['b_run','run'],['b_hint','hint'],['b_ans','ans'],['b_st','rs']])$(a).textContent=L(T[b]);$('pw_t').textContent=L(T.watchT);if(pst.length)pRender();if(pr)pShow()}
+function tests(op){const fk=OPS[op].f,tx=d.fx[fk];
+ if(d.F.q){const c=d.F.q=='c',mk=(f,r,n,dat)=>{const g=mkG([]),q=g.nodes.n1.f;q.front=f;q.rear=r;if(c)q.count=n;q.data=dat;return g};
+  const full=c?['A','B','C','D','E','F']:[1,2,3,4,5,6],part=c?['A','B','C','','','']:[10,20,30,'','',''],emp=['','','','','',''];
+  return[[mk(0,-1,0,emp),'empty queue','ಖಾಲಿ queue'],[mk(0,2,3,part),'3 items','3 ಅಂಶಗಳು'],[c?mk(2,1,6,full):mk(0,5,6,full),'full queue','ತುಂಬಿದ queue']].map(([G,a,b])=>({G,inp:{item:25,ch:'Z'},lab:[a,b]}))}
+ const kd=/\bkey\b/.test(tx),ps=/\bpos\b/.test(tx),res=[],its=fk=='place'?[5,25]:[25];
+ for(const a of[[],[10],[10,20],[10,20,30]]){const ks=!kd?[0]:a.length==0?[20]:a.length==1?[10,99]:a.length==2?[10,20,99]:[10,20,30,99],pp=!ps?[0]:a.length==0?[1,2]:a.length==1?[1,2,3]:a.length==2?[1,2,3]:[1,2,4,5];
+  for(const k of ks)for(const p of pp)for(const it of its){const t=(kd?', key '+k:'')+(ps?', pos '+p:'')+(its.length>1?', item '+it:'');res.push({G:mkG(a),inp:{item:it,key:k,pos:p,ch:'Z'},a,lab:['list '+(a.length?a.join(' → '):'empty')+t,'list '+(a.length?a.join(' → '):'ಖಾಲಿ')+t]})}}
+ return res}
+function shapeOf(G){if(d.F.q){const q=G.nodes[G.env.q].f;return JSON.stringify([q.front,q.rear,q.count,q.data.map(x=>x===''?null:x)])}
+ const rw=rowsOf(G.nodes,G.env)[0],N=G.nodes;if(!rw)return JSON.stringify([[],'none',0]);const K=d.K;
+ return JSON.stringify([rw.ids.filter(i=>!N[i].hd).map(i=>N[i].f.info),rw.end=='null'?'null':rw.end=='?'?'?':rw.end===rw.ids[0]?'ring':'bad',K.b?rw.ids.map(i=>{const b=N[i].f[K.b];return b===null?'NULL':b===undefined?'?':N[b]?lab2(N,b):'freed'}):0])}
+function fmtShape(sh){const a=JSON.parse(sh);if(d.F.q)return`front=${a[0]}, rear=${a[1]}${a[2]===undefined||a[2]===null?'':', count='+a[2]}, data=[${a[3].map(x=>x===null?'·':x).join(' ')}]`;return a[0].length?a[0].join(' → '):'empty'}
+const nums=s=>(s.match(/-?\d+/g)||[]).join(',');
+function judge(op,src){const fk=OPS[op].f,h=d.hd[fk];let ast;
+ try{ast=parseFn(stripC(src))}catch(e){return{syn:e.message}}
+ if(ast.params.length!=h.params.length)return{par:1};
+ const tl=[];
+ for(const t of tests(op)){let u,m,why=null,warn=null;
+  try{m=exec(op,t.inp,t.G);u=exec(op,t.inp,t.G,{ast})}catch(e){tl.push({t,ok:0,why:['Internal error: '+e.message,'Internal error: '+e.message]});continue}
+  const ms=shapeOf(m.G),us=shapeOf(u.G);
+  if(u.err){const e=u.err;if(e=='null'){const c=(src.split('\n')[u.errLn]||'').trim();why=[`Your code used a NULL pointer (line ${u.errLn+1}: ${c}). Check the empty list / last node case before using ->.`,`ನಿಮ್ಮ ಕೋಡ್ NULL pointer ಬಳಸಿದೆ (ಸಾಲು ${u.errLn+1}: ${c}). -> ಬಳಸುವ ಮೊದಲು ಖಾಲಿ list / ಕೊನೆಯ node ಸಂದರ್ಭ ಪರೀಕ್ಷಿಸಿ.`]}
+   else if(e=='loop')why=['Your loop never ends. Did you forget to move cur (cur = cur->link)?','ನಿಮ್ಮ loop ಮುಗಿಯುತ್ತಿಲ್ಲ. cur ಸರಿಸಲು (cur = cur->link) ಮರೆತಿರಾ?'];
+   else if(/^call:/.test(e)){const n=e.slice(5);why=[`Unknown function ${n}(). Use createNode() to get a new node.`,`${n}() ಎಂಬ function ಇಲ್ಲ. ಹೊಸ node ಗೆ createNode() ಬಳಸಿ.`]}
+   else why=['Your code could not run: '+e,'ನಿಮ್ಮ ಕೋಡ್ ಓಡಲಿಲ್ಲ: '+e]}
+  else if(u.dang)why=['A node you freed is still linked in the list. Bypass it before free().','ನೀವು free ಮಾಡಿದ node ಇನ್ನೂ list ನಲ್ಲಿ ಜೋಡಿಸಿದೆ. free() ಮೊದಲು ಅದನ್ನು ಬಿಟ್ಟು ಜೋಡಿಸಿ.'];
+  else if(us!=ms){const A=JSON.parse(ms),B=JSON.parse(us);let sub='';
+   if(!d.F.q&&JSON.stringify(A[0])==JSON.stringify(B[0])){sub=A[1]!=B[1]?[`The items are right but the end is wrong: the list should ${A[1]=='ring'?'link back to the start':'end with NULL'}.`,`Items ಸರಿ ಆದರೆ ಕೊನೆ ತಪ್ಪು: list ${A[1]=='ring'?'ಆರಂಭಕ್ಕೆ ಮರಳಬೇಕು':'NULL ನಲ್ಲಿ ಕೊನೆಗೊಳ್ಳಬೇಕು'}.`]:['The items are right going forward, but a back link (llink) is wrong.','ಮುಂದಿನ ದಿಕ್ಕಿನಲ್ಲಿ items ಸರಿ, ಆದರೆ ಹಿಂದಿನ link (llink) ತಪ್ಪಾಗಿದೆ.']}
+   why=sub||[`Expected: ${fmtShape(ms)}. Yours: ${fmtShape(us)}.`,`ನಿರೀಕ್ಷೆ: ${fmtShape(ms)}. ನಿಮ್ಮದು: ${fmtShape(us)}.`]}
+  else if(nums(m.out)!=nums(u.out))why=[`Printed numbers differ. Expected ${nums(m.out)||'none'}, yours ${nums(u.out)||'none'}.`,`ಮುದ್ರಿತ ಸಂಖ್ಯೆಗಳು ಬೇರೆ. ನಿರೀಕ್ಷೆ ${nums(m.out)||'ಇಲ್ಲ'}, ನಿಮ್ಮದು ${nums(u.out)||'ಇಲ್ಲ'}.`];
+  else if(m.out.trim()&&!u.out.trim())why=['Nothing was printed, but this case should print a message.','ಏನೂ ಮುದ್ರಿಸಿಲ್ಲ, ಆದರೆ ಈ ಸಂದರ್ಭದಲ್ಲಿ ಸಂದೇಶ ಮುದ್ರಿಸಬೇಕು.'];
+  if(!why&&u.leak>m.leak)warn=T.warn;
+  tl.push({t,ok:!why,why,warn,u,m})}
+ return{tests:tl,src}}
+function pRun(){const src=$('ped').value,l=lang=='en'?0:1;
+ if(src.split('\n').filter(x=>x.trim()&&!/^[{}]$/.test(x.trim())).length<2){$('pres').innerHTML=`<div class="no">${L(T.emp)}</div>`;return}
+ pClear();const r=judge(pop,src);pr=r;
+ if(r.syn||r.par){$('pres').innerHTML=r.par?`<div class="no">${L(T.npar)}</div>`:`<div class="no"><b>${L(T.syn)}</b>${esc(r.syn)}</div><div class="mu">${L(T.synh)}</div>`;pr=null;return}
+ pShow()}
+function pShow(){const l=lang=='en'?0:1,r=pr,ok=r.tests.filter(x=>x.ok).length,tot=r.tests.length,all=ok==tot;
+ let h=`<div class="${all?'ok':'no'}"><b>${all?'✅ '+L(T.pass):'❌ '+ok+' / '+tot+' '+L(T.part)}</b></div>`;
+ h+=r.tests.map((x,i)=>`<div class="wl"><span class="${x.ok?'ok':'no'}">${x.ok?'✅':'❌'}</span> <b>${esc(x.t.lab[l])}</b> <button class="sn" onclick="pWatch(${i})">${L(T.watch)}</button>${x.why?`<div class="no">${esc(x.why[l])}</div>`:''}${x.warn?`<div class="mu">⚠ ${L(x.warn)}</div>`:''}</div>`).join('');
+ const bad=r.tests.filter(x=>!x.ok);if(bad.some(x=>x.t.a&&x.t.a.length==0))h+=`<div class="mu">${L(T.tipE)}</div>`;else if(bad.some(x=>x.t.a&&x.t.a.length==1))h+=`<div class="mu">${L(T.tip1)}</div>`;
+ $('pres').innerHTML=h}
+function pWatch(i){pst=pr.tests[i].u.steps;pix=0;$('pwatch').hidden=false;pRender();$('pwatch').scrollIntoView({block:'nearest'})}
+function pRender(){const S=pst[pix],ul=pr.src.split('\n');$('pw_stage').innerHTML=stageHTML(S.N,S.E);$('pw_msg').textContent=L([S.en,S.kn]);$('pw_out').textContent=S.o;$('pw_cnt').textContent=`${pix+1} / ${pst.length}`;
+ $('pw_code').innerHTML=ul.map((t,i)=>`<div class="${i===S.ln?'h':''}">${esc(t)||' '}</div>`).join('');const h=$('pw_code').querySelector('.h');if(h)$('pw_code').scrollTop=Math.max(0,h.offsetTop-60)}
+function pStep(x){pix=Math.max(0,Math.min(pst.length-1,pix+x));pRender()}
+function pHint(){phl=Math.min(3,phl+1);const l=lang=='en'?0:1,fk=OPS[pop].f,ls=d.fx[fk].split('\n'),body=ls.slice(1).filter(x=>x.trim()&&!/^[{}]$/.test(x.trim())&&!/^(NODE|int|char|struct queue) [\w, *]+;$/.test(x.trim()));let h='';
+ const cs=body.filter(x=>/^\s*if \(/.test(x)).map(why).filter(Boolean);
+ h+=`<div class="wl"><b>1 · ${L(T.hi1)}</b><div>${L(OI[fk])}</div>${cs.length?'<ul>'+cs.map(c=>`<li>${esc(c[l])}</li>`).join('')+'</ul>':''}</div>`;
+ if(phl>=2)h+=`<div class="wl"><b>2 · ${L(T.hi2)}</b><ol>`+body.map(why).filter(Boolean).map(c=>`<li>${esc(c[l])}</li>`).join('')+'</ol></div>';
+ if(phl>=3)h+=`<div class="wl"><b>3 · ${L(T.hi3)}</b><pre style="max-height:none">${esc(ls.slice(0,Math.ceil(ls.length/2)).join('\n'))}\n    ...</pre></div>`;
+ $('phint').innerHTML=h}
+function pAns(){const fk=OPS[pop].f;$('pans').hidden=false;$('pans').innerHTML=`<b>${L(T.ansT)}</b><pre style="max-height:none">${esc(d.fx[fk])}</pre>${whyHTML(fk)}<button onclick="toV('${pop}')">${L(T.toV)}</button>`;$('pans').scrollIntoView({block:'nearest'})}
+
+// ---------- UI ----------
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function codeHTML(rng,hl){return rng.map(i=>`<div data-i="${i}" class="${i===hl?'h':''}">${esc(d.lines[i].t)||' '}</div>`).join('')}
+function render(){
+ const S=st.length?st[ix]:null,l=lang=='en'?0:1;
+ $('h1').textContent=L(T.h1);$('bE').className=lang=='en'?'on':'';$('bK').className=lang=='kn'?'on':'';
+ for(const[a,b]of[['l_v','v'],['l_k','k'],['l_p','p'],['b_r','r'],['b_b','b'],['b_n','n'],['b_a','all'],['b_c','cp'],['b_g','gm'],['l_h','hide'],['fct','fc'],['ct','full']])$(a).textContent=L(T[b]);
+ $('pl').textContent=L(tm?T.pause:T.auto);$('leg').textContent=L(T.leg);
+ $('pgs').innerHTML=T.G.map((g,gi)=>`<div class="g">${L(g)}</div><div class="row">`+PRG.filter(p=>p.g==gi).map(p=>`<button class="${p.id==d.id?'on':''}" onclick="sel('${p.id}')">${p.n[l]}</button>`).join('')+'</div>').join('');
+ const ex=(d.x?XI[d.x]:FI[d.k]);$('intro').innerHTML=`<b>${d.n[l]}</b><div>${L(FI[d.k])}${d.x?'<br>'+L(XI[d.x]):''}</div>`;
+ $('ops').innerHTML=d.ops.map(o=>`<button class="op ${o==cop?'on':''}" onclick="go('${o}')">${lbl(o,l)}</button>`).join('');
+ const N=S?S.N:G.nodes,E=S?S.E:G.env;$('stage').innerHTML=stageHTML(N,E);$('vars').textContent=varsTxt(E);
+ $('msg').textContent=S?L([S.en,S.kn]):L(T.pick);$('out').textContent=S?S.o:'';$('cnt').textContent=S?`${L(T.step)} ${ix+1} / ${st.length}`:'';
+ const fk=cop?OPS[cop].f:d.keys[0],a=fk,s0=d.fo[a],fl=d.fx[a].split('\n').length,hl=S?S.ln:-2,ci=cop?d.calls[cop]:-1;
+ $('fcode').innerHTML=(ci>=0?`<div data-i="${ci}" class="${hl===ci?'h':''}">/* main */  ${esc(d.lines[ci].t.trim())}</div>`:'')+codeHTML([...Array(fl).keys()].map(x=>s0+x),hl);
+ const fc=$('fcode'),fh=fc.querySelector('.h');if(fh)fc.scrollTop=Math.max(0,fh.offsetTop-fc.clientHeight/3);
+ $('expl').innerHTML=`<b>${L(T.ex)}</b><div>${cop?L(OI[cop]):L(FI[d.k])}</div>`;
+ $('code').innerHTML=codeHTML(d.lines.map((_,i)=>i),hl);const cd=$('code'),h2=cd.querySelector('.h');if(h2)cd.scrollTop=Math.max(0,h2.offsetTop-cd.clientHeight/3);
+ $('fcode').className=$('code').className=$('hc').checked?'hide':'';
+ $('wo').textContent=L(T.order)+' '+['struct + typedef','createNode',...d.keys.map(k=>d.hd[k].name),'main'].join(' → ');
+ $('vids').innerHTML=`<b>${L(T.vid)}</b><div class="mu">${L(T.vn)}</div><div class="row">`+VID.map(v=>`<a class="b" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(v[2])}">▶ ${v[l]}</a>`).join('')+`<a class="b" target="_blank" rel="noopener" href="https://www.classcentral.com/classroom/youtube-linked-list-singly-doubly-circular-theory-code-implementation-190061">📋 Playlist: Singly · Doubly · Circular (19 videos)</a></div>`;
+ $('rules').innerHTML=`<b>${L(T.rl)}</b><ul><li>${L(T.r1)}</li><li>${L(T.r2)}</li><li>${L(T.r3)}</li></ul>`;
+ if(gm)dg();$('tabs').innerHTML=[['C',T.tC],['V',T.tV],['P',T.tP]].map(([k,t])=>`<button class="${tb==k?'on':''}" onclick="tab('${k}')">${L(t)}</button>`).join('');if(tb=='C')renderC();if(tb=='P')renderP()}
+function setL(x){lang=x;render()}
+function sel(id){stop();build(PRG.find(p=>p.id==id));G=mkG([10,20,30]);st=[];ix=0;cop='';gm=null;$('gm').hidden=true;pInit();render()}
+function rst(){stop();G=mkG([10,20,30]);st=[];ix=0;render()}
+function nodeCount(){return d.F.q?0:(rowsOf(G.nodes,G.env)[0]||{ids:[]}).ids.filter(i=>!G.nodes[i].hd).length}
+function go(op){stop();const inp={item:parseInt($('v').value),key:parseInt($('k').value),pos:parseInt($('p').value),ch:($('v').value||'X')[0]},fk=OPS[op].f,tx=d.fx[fk];
+ const bad=(/\bitem\b/.test(tx)&&!/char|%c/.test(tx)&&!/scanf\("%d", &item/.test(tx)&&isNaN(inp.item))||(/\bkey\b/.test(tx)&&isNaN(inp.key))||(/\bpos\b/.test(tx)&&isNaN(inp.pos))||(/scanf\("%d", &item/.test(tx)&&isNaN(inp.item));
+ if(bad){$('msg').textContent=L(T.nn);return}
+ if(['iF','iE','iR','place','iP'].includes(op)&&nodeCount()>=7){$('msg').textContent=L(T.lim);return}
+ cop=op;
+ if(op=='cr'){G=mkG([]);let all=[];for(const x of[10,20,30]){const r=exec('iF',{...inp,item:x},G);G=r.G;all=all.concat(r.steps.filter(s=>!s.done))}const r=exec('dsp',inp,G);st=all.concat([r.steps[r.steps.length-1]]);st[st.length-1].ln=-1}
+ else{const r=exec(op,inp,G);st=r.steps;G=r.G}
+ ix=0;render()}
+function step(x){stop();ix=Math.max(0,Math.min(st.length-1,ix+x));render()}
+function runAll(){stop();if(st.length){ix=st.length-1;render()}}
+function play(){if(tm)return stop();if(!st.length)return;if(ix>=st.length-1)ix=0;tm=setInterval(()=>{if(ix>=st.length-1)return stop();ix++;render()},1100);render()}
+function stop(){if(tm){clearInterval(tm);tm=null;$('pl').textContent=L(T.auto)}}
+function cp(){const t=d.lines.map(l=>l.t).join('\n'),ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();$('msg').textContent=L(ok?T.cpd:T.cpf)}
+function game(){const fk=cop?OPS[cop].f:d.keys[0],ls=d.lines.filter(l=>l.fn==fk&&l.t.trim()&&!/^[{}]$/.test(l.t.trim()));gm={e:ls,i:0,u:[],b:[],o:ls.map((_,i)=>i).sort(()=>Math.random()-.5)};dg()}
+function dg(m){const g=gm;$('gm').hidden=false;$('gm').innerHTML=`<b>🎮 ${esc(g.e[0].t.trim())}</b><div class="mu">${L(T.gt)}</div><pre style="max-height:none">${g.b.map(i=>`<div>${esc(g.e[i].t)}</div>`).join('')||'<div> </div>'}</pre>`+(g.i==g.e.length?`<div id="msg">${L(T.gd)}</div>`:(m?`<div class="mu" style="color:var(--cur)">${L(T.gw)}</div>`:'')+g.o.filter(i=>!g.u.includes(i)).map(i=>`<button class="gb" onclick="pick(${i})">${esc(g.e[i].t.trim())}</button>`).join(''))}
+function pick(i){const g=gm;if(g.e[i].t.trim()==g.e[g.i].t.trim()){g.u.push(i);g.b.push(g.i);g.i++;dg()}else dg(1)}
+$('hc').onchange=render;sel('l7');
+</script></body></html>
